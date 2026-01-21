@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>01 - Overall Architecture | Cresta AI Platform Assessment</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0f1a;
+            --bg-secondary: #111827;
+            --bg-tertiary: #1f2937;
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --accent-blue: #3b82f6;
+            --accent-cyan: #06b6d4;
+            --accent-green: #10b981;
+            --accent-yellow: #f59e0b;
+            --accent-red: #ef4444;
+            --accent-purple: #8b5cf6;
+            --border-color: #374151;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'IBM Plex Sans', -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 60px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+            border-bottom: 1px solid var(--border-color);
+            padding: 40px 0;
+        }
+        
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .breadcrumb {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+        
+        .breadcrumb a {
+            color: var(--accent-cyan);
+            text-decoration: none;
+        }
+        
+        header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        
+        .doc-num {
+            font-family: 'IBM Plex Mono', monospace;
+            background: var(--accent-blue);
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.875rem;
+        }
+        
+        nav.doc-nav {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 16px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        nav.doc-nav ul {
+            list-style: none;
+            display: flex;
+            gap: 8px;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 60px;
+            overflow-x: auto;
+        }
+        
+        nav.doc-nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        
+        nav.doc-nav a:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+        
+        nav.doc-nav a.active {
+            background: var(--accent-blue);
+            color: white;
+        }
+        
+        section {
+            margin-bottom: 48px;
+        }
+        
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 40px 0 24px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--border-color);
+        }
+        
+        h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin: 24px 0 16px;
+            color: var(--accent-cyan);
+        }
+        
+        p {
+            margin-bottom: 16px;
+            color: var(--text-secondary);
+        }
+        
+        .context-box {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--accent-cyan);
+            border-radius: 0 12px 12px 0;
+            padding: 24px;
+            margin: 24px 0;
+        }
+        
+        .context-box strong {
+            color: var(--accent-cyan);
+        }
+        
+        .diagram-container {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 32px;
+            margin: 24px 0;
+            overflow-x: auto;
+        }
+        
+        .diagram-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .diagram-title::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 20px;
+            background: var(--accent-cyan);
+            border-radius: 2px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 24px 0;
+            font-size: 0.95rem;
+        }
+        
+        th, td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        th {
+            background: var(--bg-tertiary);
+            font-weight: 600;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+        
+        tr:hover td {
+            background: rgba(59, 130, 246, 0.05);
+        }
+        
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .badge.confirmed { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); }
+        .badge.pending { background: rgba(245, 158, 11, 0.15); color: var(--accent-yellow); }
+        .badge.high { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); }
+        .badge.medium { background: rgba(245, 158, 11, 0.15); color: var(--accent-yellow); }
+        .badge.low { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); }
+        
+        .risk-box {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 16px 0;
+        }
+        
+        .risk-box h4 {
+            font-size: 1rem;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .risk-box.latency { border-left: 4px solid var(--accent-yellow); }
+        .risk-box.security { border-left: 4px solid var(--accent-green); }
+        .risk-box.compliance { border-left: 4px solid var(--accent-blue); }
+        .risk-box.operational { border-left: 4px solid var(--accent-purple); }
+        
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+        
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            padding: 20px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            margin-bottom: 24px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.875rem;
+        }
+        
+        code {
+            font-family: 'IBM Plex Mono', monospace;
+            background: var(--bg-tertiary);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.875rem;
+        }
+        
+        .highlight-box {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 24px 0;
+        }
+        
+        .highlight-box.warning { border-left: 4px solid var(--accent-yellow); }
+        .highlight-box.info { border-left: 4px solid var(--accent-blue); }
+        
+        footer {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            padding: 40px 0;
+            margin-top: 60px;
+        }
+        
+        footer .container {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        
+        @media (max-width: 900px) {
+            .two-col { grid-template-columns: 1fr; }
+            .container { padding: 20px; }
+            nav.doc-nav ul { padding: 0 20px; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div>
+                <div class="breadcrumb"><a href="00-executive-summary.html">← Back to Executive Summary</a></div>
+                <h1>Overall Architecture</h1>
+            </div>
+            <span class="doc-num">Document 01</span>
+        </div>
+    </header>
+
+    <nav class="doc-nav">
+        <ul>
+            <li><a href="00-executive-summary.html">00 Summary</a></li>
+            <li><a href="01-overall-architecture.html" class="active">01 Architecture</a></li>
+            <li><a href="02-amazon-connect-integration.html">02 Connect</a></li>
+            <li><a href="03-voice-stack-architecture.html">03 Voice</a></li>
+            <li><a href="04-ml-services-architecture.html">04 ML</a></li>
+            <li><a href="05-realtime-dataflow-sequences.html">05 Data Flow</a></li>
+            <li><a href="06-data-security-architecture.html">06 Security</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="legend">
+            <div class="legend-item">⏱️ Latency Risk</div>
+            <div class="legend-item">🔒 Security Risk</div>
+            <div class="legend-item">📋 Compliance Risk</div>
+            <div class="legend-item">⚙️ Operational Risk</div>
+            <div class="legend-item">🟡 Requires Follow-up</div>
+        </div>
+
+        <section>
+            <h2>High-Level Architecture Overview</h2>
+            
+            <div class="context-box">
+                <strong>Context:</strong> Cresta is a real-time AI platform that integrates with Amazon Connect to provide agent guidance during calls. The platform is hosted on AWS with customer-isolated infrastructure. Audio flows from Connect through Kinesis Video Streams to Cresta's voice stack, where it's transcribed by Deepgram ASR and analyzed by ML models (including the Ocean-1 foundation model). Results are pushed to the Cresta Agent App in under 1.5 seconds.
+            </div>
+
+            <div class="diagram-container">
+                <div class="diagram-title">End-to-End System Architecture</div>
+                <div class="mermaid">
+flowchart TB
+    subgraph CustomerEnv["Customer Environment"]
+        Customer(("👤 Customer<br/>Phone/Chat"))
+    end
+
+    subgraph AWSConnect["Amazon Connect"]
+        ConnectInstance["Amazon Connect<br/>Instance"]
+        ContactFlow["Contact Flow<br/>(IVR Logic)"]
+        KVS["Kinesis Video<br/>Streams ⏱️🔒"]
+        CTR["Contact Trace<br/>Records"]
+        AgentWorkspace["Agent<br/>Workspace/CCP"]
+    end
+
+    subgraph CrestaCloud["Cresta Platform (AWS Hosted)"]
+        subgraph Ingress["Traffic Management"]
+            DNS["Customer-Specific<br/>Subdomains"]
+            ELB["AWS ELB"]
+            WAF["NGINX Ingress<br/>+ Wallarm WAF 🔒"]
+        end
+
+        subgraph VoiceStack["Voice Stack"]
+            GoWalter["gowalter<br/>(Audio Handler) ⏱️"]
+            ASR["ASR Service<br/>(Deepgram) ⏱️"]
+            APIServer["apiserver<br/>(Transcript Persistence)"]
+        end
+
+        subgraph BusinessLogic["Business Logic Layer"]
+            Orchestrator["Orchestrator<br/>(ML Coordination)"]
+            ClientSub["clientsubscription<br/>(Real-time Events)"]
+            SearchPolicies["Search Policies<br/>(Customer Config)"]
+        end
+
+        subgraph MLServices["ML Services"]
+            Router["ML Router"]
+            Shards["Model Shards<br/>(GPU/CPU Pods)"]
+            Ocean1["Ocean-1<br/>Foundation Model"]
+            LoRA["LoRA Adapters<br/>(Per-Customer)"]
+        end
+
+        subgraph DataStores["Data Layer"]
+            Postgres[("PostgreSQL 📋")]
+            Redis[("Redis Streams")]
+            ES[("Elasticsearch")]
+            ClickHouse[("ClickHouse<br/>Analytics")]
+            S3[("AWS S3<br/>Audio Storage 🔒")]
+        end
+
+        subgraph AgentApp["Agent Application"]
+            CrestaApp["Cresta Agent App<br/>(Desktop)"]
+        end
+    end
+
+    subgraph ExternalAI["External AI Services"]
+        Fireworks["Fireworks AI<br/>(Model Hosting) ⏱️"]
+        Cartesia["Cartesia<br/>(Voice TTS)"]
+    end
+
+    Customer --> ConnectInstance
+    ConnectInstance --> ContactFlow
+    ContactFlow --> KVS
+    ContactFlow --> AgentWorkspace
+    ConnectInstance --> CTR
+
+    KVS -->|"Audio Stream<br/>8kHz PCM"| DNS
+    DNS --> ELB
+    ELB --> WAF
+    WAF --> GoWalter
+
+    GoWalter -->|"Audio Chunks<br/>20-100ms"| ASR
+    ASR -->|"Partial/Final<br/>Transcripts"| APIServer
+    APIServer --> Postgres
+    APIServer --> Orchestrator
+
+    Orchestrator --> SearchPolicies
+    Orchestrator --> Router
+    Router --> Shards
+    Shards --> Ocean1
+    Ocean1 --> LoRA
+    Shards --> Fireworks
+
+    Orchestrator -->|"Actions/Hints"| ClientSub
+    ClientSub -->|"Redis Streams"| Redis
+    ClientSub --> CrestaApp
+
+    GoWalter -->|"Redacted Audio"| S3
+    APIServer --> ES
+    APIServer --> ClickHouse
+
+    AgentWorkspace --> CrestaApp
+    CrestaApp -->|"Real-time<br/>Guidance"| AgentWorkspace
+                </div>
+            </div>
+
+            <h3>Architecture Component Reference</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Component</th>
+                        <th>Technology</th>
+                        <th>Function</th>
+                        <th>Risk Flags</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Amazon Connect</strong></td>
+                        <td>AWS CCaaS</td>
+                        <td>Primary contact center platform handling inbound/outbound calls</td>
+                        <td>—</td>
+                        <td><span class="badge confirmed">✓ Confirmed</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Kinesis Video Streams</strong></td>
+                        <td>AWS KVS</td>
+                        <td>Real-time audio streaming at 8kHz with dual-track (customer + agent)</td>
+                        <td>⏱️ 🔒</td>
+                        <td><span class="badge confirmed">✓ Confirmed</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Customer Subdomains</strong></td>
+                        <td>DNS + ELB</td>
+                        <td>Tenant isolation via <code>customer.region.cresta.ai</code> pattern</td>
+                        <td>🔒 📋</td>
+                        <td><span class="badge confirmed">✓ Confirmed</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Wallarm WAF</strong></td>
+                        <td>NGINX-based WAF</td>
+                        <td>API protection, DDoS mitigation, request filtering</td>
+                        <td>🔒</td>
+                        <td><span class="badge confirmed">✓ Confirmed</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>gowalter</strong></td>
+                        <td>Cresta Service</td>
+                        <td>WebSocket handling, audio buffering, PII redaction, S3 upload</td>
+                        <td>⏱️</td>
+                        <td><span class="badge confirmed">✓ Confirmed</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Deepgram ASR</strong></td>
+                        <td>Third-party ASR</td>
+                        <td>Streaming speech-to-text with 200-300ms latency target</td>
+                        <td>⏱️</td>
+                        <td><span class="badge confirmed">✓ Confirmed</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>apiserver</strong></td>
+                        <td>Cresta Service</td>
+                        <td>Transcript persistence, event publishing, conversation management</td>
+                        <td>—</td>
+                        <td><span class="badge confirmed">✓ Confirmed</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Orchestrator</strong></td>
+                        <td>Cresta Service</td>
+                        <td>ML coordination, inference graph building, policy lookup</td>
+                        <td>⏱️</td>
+                        <td><span class="badge confirmed">✓ Confirmed</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>clientsubscription</strong></td>
+                        <td>Cresta Service</td>
+                        <td>Real-time event delivery to Agent App via WebSocket</td>
+                        <td>—</td>
+                        <td><span class="badge confirmed">✓ Confirmed</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Ocean-1</strong></td>
+                        <td>Mistral 7B Fine-tuned</td>
+                        <td>Contact center foundation model for knowledge assist, summarization</td>
+                        <td>⏱️</td>
+                        <td><span class="badge confirmed">✓ Confirmed</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>LoRA Adapters</strong></td>
+                        <td>Per-customer</td>
+                        <td>Customer-specific fine-tuning without separate model instances</td>
+                        <td>—</td>
+                        <td><span class="badge confirmed">✓ Confirmed</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Fireworks AI</strong></td>
+                        <td>External Inference</td>
+                        <td>Multi-LoRA model serving infrastructure for Ocean-1</td>
+                        <td>⏱️ ⚙️</td>
+                        <td><span class="badge confirmed">✓ Confirmed</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>PostgreSQL</strong></td>
+                        <td>AWS RDS</td>
+                        <td>Conversations, transcripts, users, policies storage</td>
+                        <td>📋</td>
+                        <td><span class="badge confirmed">✓ Confirmed</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Redis Streams</strong></td>
+                        <td>AWS ElastiCache</td>
+                        <td>Real-time event streaming and pub/sub</td>
+                        <td>—</td>
+                        <td><span class="badge confirmed">✓ Confirmed</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Elasticsearch</strong></td>
+                        <td>AWS OpenSearch</td>
+                        <td>Full-text conversation search and indexing</td>
+                        <td>—</td>
+                        <td><span class="badge confirmed">✓ Confirmed</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>ClickHouse</strong></td>
+                        <td>OLAP Database</td>
+                        <td>Analytics, metrics, aggregations for dashboards</td>
+                        <td>—</td>
+                        <td><span class="badge confirmed">✓ Confirmed</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>S3 Audio Storage</strong></td>
+                        <td>AWS S3</td>
+                        <td>Encrypted storage for redacted call recordings</td>
+                        <td>🔒</td>
+                        <td><span class="badge confirmed">✓ Confirmed</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Cresta Agent App</strong></td>
+                        <td>Desktop Application</td>
+                        <td>Real-time guidance display, knowledge assist, summaries</td>
+                        <td>🟡</td>
+                        <td><span class="badge pending">Verify Deployment</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>Customer Isolation Architecture</h2>
+
+            <div class="context-box">
+                <strong>Context:</strong> Cresta implements multi-tenant isolation through a combination of customer-specific DNS subdomains, separate database instances per customer, and isolated S3 paths. This architecture ensures data sovereignty and prevents cross-tenant data access.
+            </div>
+
+            <div class="diagram-container">
+                <div class="diagram-title">Customer Isolation Model</div>
+                <div class="mermaid">
+flowchart TB
+    subgraph Customer1["Customer A"]
+        C1Agent["Agent A"]
+    end
+
+    subgraph Customer2["Customer B"]
+        C2Agent["Agent B"]
+    end
+
+    subgraph DNS["DNS Routing"]
+        C1DNS["customerA.us-west-2.cresta.ai"]
+        C2DNS["customerB.eu-west-1.cresta.ai"]
+    end
+
+    subgraph USRegion["US-West-2 Region"]
+        C1EKS["EKS Cluster"]
+        C1DB[("PostgreSQL<br/>Customer A")]
+        C1S3[("S3<br/>Customer A")]
+    end
+
+    subgraph EURegion["EU-West-1 Region"]
+        C2EKS["EKS Cluster"]
+        C2DB[("PostgreSQL<br/>Customer B")]
+        C2S3[("S3<br/>Customer B")]
+    end
+
+    C1Agent --> C1DNS --> C1EKS
+    C2Agent --> C2DNS --> C2EKS
+    
+    C1EKS --> C1DB
+    C1EKS --> C1S3
+    C2EKS --> C2DB
+    C2EKS --> C2S3
+                </div>
+            </div>
+
+            <h3>Isolation Mechanisms</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Layer</th>
+                        <th>Isolation Method</th>
+                        <th>Description</th>
+                        <th>POC Consideration</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>DNS</strong></td>
+                        <td>Customer Subdomains</td>
+                        <td><code>customer.region.cresta.ai</code> routes to region-specific infrastructure</td>
+                        <td>Verify subdomain provisioning process</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Database</strong></td>
+                        <td>Separate Databases</td>
+                        <td>Each customer has isolated PostgreSQL database</td>
+                        <td>Confirm database provisioning timeline</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Storage</strong></td>
+                        <td>S3 Path Isolation</td>
+                        <td>Audio files stored in customer-specific S3 paths</td>
+                        <td>Review S3 bucket policies</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Search</strong></td>
+                        <td>Separate ES Indices</td>
+                        <td>Conversation search isolated per customer</td>
+                        <td>Verify index access controls</td>
+                    </tr>
+                    <tr>
+                        <td><strong>ML Models</strong></td>
+                        <td>LoRA Adapters</td>
+                        <td>Customer-specific model customizations via LoRA</td>
+                        <td>Understand LoRA training process</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>Risk Assessment</h2>
+
+            <div class="two-col">
+                <div class="risk-box latency">
+                    <h4>⏱️ Latency Risks</h4>
+                    <table>
+                        <tr>
+                            <td>KVS → Cresta Network</td>
+                            <td><span class="badge medium">Medium</span></td>
+                            <td>Regional deployment critical</td>
+                        </tr>
+                        <tr>
+                            <td>ASR Processing</td>
+                            <td><span class="badge high">High</span></td>
+                            <td>200-300ms target, Deepgram dependency</td>
+                        </tr>
+                        <tr>
+                            <td>ML Inference</td>
+                            <td><span class="badge high">High</span></td>
+                            <td>500ms target, Fireworks dependency</td>
+                        </tr>
+                        <tr>
+                            <td>WebSocket Delivery</td>
+                            <td><span class="badge medium">Medium</span></td>
+                            <td>Client network dependent</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="risk-box security">
+                    <h4>🔒 Security Risks</h4>
+                    <table>
+                        <tr>
+                            <td>Cross-account KVS Access</td>
+                            <td><span class="badge medium">Medium</span></td>
+                            <td>IAM configuration required</td>
+                        </tr>
+                        <tr>
+                            <td>API Authentication</td>
+                            <td><span class="badge pending">🟡 Verify</span></td>
+                            <td>Confirm auth mechanism</td>
+                        </tr>
+                        <tr>
+                            <td>Cross-tenant Isolation</td>
+                            <td><span class="badge low">Low</span></td>
+                            <td>Database separation confirmed</td>
+                        </tr>
+                        <tr>
+                            <td>PII in Transit</td>
+                            <td><span class="badge low">Low</span></td>
+                            <td>TLS enforced</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="two-col">
+                <div class="risk-box compliance">
+                    <h4>📋 Compliance Risks</h4>
+                    <table>
+                        <tr>
+                            <td>GDPR Data Residency</td>
+                            <td><span class="badge low">Low</span></td>
+                            <td>EU region available</td>
+                        </tr>
+                        <tr>
+                            <td>Call Recording Consent</td>
+                            <td><span class="badge medium">Medium</span></td>
+                            <td>Contact Flow must announce</td>
+                        </tr>
+                        <tr>
+                            <td>PII Redaction Gaps</td>
+                            <td><span class="badge low">Low</span></td>
+                            <td>Temporal verification in place</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="risk-box operational">
+                    <h4>⚙️ Operational Risks</h4>
+                    <table>
+                        <tr>
+                            <td>Cresta Availability</td>
+                            <td><span class="badge pending">🟡 Verify</span></td>
+                            <td>Confirm SLA and failover</td>
+                        </tr>
+                        <tr>
+                            <td>Deepgram Availability</td>
+                            <td><span class="badge pending">🟡 Verify</span></td>
+                            <td>Confirm fallback options</td>
+                        </tr>
+                        <tr>
+                            <td>Fireworks Availability</td>
+                            <td><span class="badge pending">🟡 Verify</span></td>
+                            <td>Confirm redundancy</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>POC Architecture Considerations</h2>
+
+            <div class="highlight-box info">
+                <h3>Integration Approaches</h3>
+                <p>There are two primary methods for integrating audio into Cresta. The choice impacts architecture, latency, and reliability:</p>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Approach</th>
+                        <th>Method</th>
+                        <th>Pros</th>
+                        <th>Cons</th>
+                        <th>Recommendation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Option A</strong></td>
+                        <td>CCaaS Direct Stream (KVS)</td>
+                        <td>
+                            <ul style="margin: 0; padding-left: 16px; color: var(--text-secondary);">
+                                <li>Lower latency</li>
+                                <li>Server-side processing</li>
+                                <li>No agent desktop dependency</li>
+                            </ul>
+                        </td>
+                        <td>
+                            <ul style="margin: 0; padding-left: 16px; color: var(--text-secondary);">
+                                <li>Requires Lambda integration</li>
+                                <li>IAM configuration needed</li>
+                            </ul>
+                        </td>
+                        <td><span class="badge confirmed">Recommended</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Option B</strong></td>
+                        <td>Agent App Desktop Capture</td>
+                        <td>
+                            <ul style="margin: 0; padding-left: 16px; color: var(--text-secondary);">
+                                <li>Works with any CCaaS</li>
+                                <li>Simpler integration</li>
+                            </ul>
+                        </td>
+                        <td>
+                            <ul style="margin: 0; padding-left: 16px; color: var(--text-secondary);">
+                                <li>Desktop app dependency</li>
+                                <li>Potential audio quality issues</li>
+                                <li>Higher latency</li>
+                            </ul>
+                        </td>
+                        <td><span class="badge pending">Fallback Only</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="highlight-box warning">
+                <h3>🟡 Items Requiring Vendor Clarification</h3>
+                <ol style="padding-left: 20px; color: var(--text-secondary);">
+                    <li><strong>KVS Integration Method:</strong> Does Cresta use Lambda consumer or direct GetMedia API?</li>
+                    <li><strong>Agent App Deployment:</strong> Is it a browser extension, standalone desktop app, or embedded in CCP?</li>
+                    <li><strong>Authentication Flow:</strong> How does Connect authenticate with Cresta endpoints?</li>
+                    <li><strong>Failover Handling:</strong> What happens if Cresta is unreachable during a call?</li>
+                </ol>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div>Cresta AI Platform Assessment - Document 01: Overall Architecture</div>
+            <div>Generated: January 2025</div>
+        </div>
+    </footer>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            themeVariables: {
+                primaryColor: '#3b82f6',
+                primaryTextColor: '#f3f4f6',
+                primaryBorderColor: '#374151',
+                lineColor: '#6b7280',
+                secondaryColor: '#1f2937',
+                tertiaryColor: '#111827',
+                background: '#111827',
+                mainBkg: '#1f2937',
+                nodeBorder: '#374151',
+                clusterBkg: '#1f2937',
+                clusterBorder: '#374151',
+                titleColor: '#f3f4f6',
+                edgeLabelBackground: '#1f2937'
+            },
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis'
+            },
+            securityLevel: 'loose'
+        });
+    </script>
+</body>
+</html>

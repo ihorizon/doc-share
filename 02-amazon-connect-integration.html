@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02 - Amazon Connect Integration | Cresta AI Platform Assessment</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0f1a;
+            --bg-secondary: #111827;
+            --bg-tertiary: #1f2937;
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --accent-blue: #3b82f6;
+            --accent-cyan: #06b6d4;
+            --accent-green: #10b981;
+            --accent-yellow: #f59e0b;
+            --accent-red: #ef4444;
+            --accent-purple: #8b5cf6;
+            --accent-orange: #f97316;
+            --border-color: #374151;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'IBM Plex Sans', -apple-system, sans-serif; background: var(--bg-primary); color: var(--text-primary); line-height: 1.7; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 40px 60px; }
+        header { background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%); border-bottom: 1px solid var(--border-color); padding: 40px 0; }
+        header .container { display: flex; justify-content: space-between; align-items: center; }
+        .breadcrumb { font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 8px; }
+        .breadcrumb a { color: var(--accent-cyan); text-decoration: none; }
+        header h1 { font-size: 2rem; font-weight: 700; }
+        .doc-num { font-family: 'IBM Plex Mono', monospace; background: var(--accent-orange); padding: 4px 12px; border-radius: 4px; font-size: 0.875rem; }
+        nav.doc-nav { background: var(--bg-secondary); border-bottom: 1px solid var(--border-color); padding: 16px 0; position: sticky; top: 0; z-index: 100; }
+        nav.doc-nav ul { list-style: none; display: flex; gap: 8px; max-width: 1400px; margin: 0 auto; padding: 0 60px; overflow-x: auto; }
+        nav.doc-nav a { color: var(--text-secondary); text-decoration: none; padding: 8px 16px; border-radius: 6px; font-size: 0.875rem; white-space: nowrap; transition: all 0.2s; }
+        nav.doc-nav a:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+        nav.doc-nav a.active { background: var(--accent-orange); color: white; }
+        section { margin-bottom: 48px; }
+        h2 { font-size: 1.5rem; font-weight: 600; margin: 40px 0 24px; padding-bottom: 12px; border-bottom: 2px solid var(--border-color); }
+        h3 { font-size: 1.125rem; font-weight: 600; margin: 24px 0 16px; color: var(--accent-cyan); }
+        p { margin-bottom: 16px; color: var(--text-secondary); }
+        .context-box { background: linear-gradient(135deg, rgba(249, 115, 22, 0.1) 0%, rgba(245, 158, 11, 0.1) 100%); border: 1px solid var(--border-color); border-left: 4px solid var(--accent-orange); border-radius: 0 12px 12px 0; padding: 24px; margin: 24px 0; }
+        .context-box strong { color: var(--accent-orange); }
+        .diagram-container { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; padding: 32px; margin: 24px 0; overflow-x: auto; }
+        .diagram-title { font-size: 1rem; font-weight: 600; margin-bottom: 20px; color: var(--text-primary); display: flex; align-items: center; gap: 8px; }
+        .diagram-title::before { content: ''; display: inline-block; width: 4px; height: 20px; background: var(--accent-orange); border-radius: 2px; }
+        table { width: 100%; border-collapse: collapse; margin: 24px 0; font-size: 0.95rem; }
+        th, td { padding: 14px 16px; text-align: left; border-bottom: 1px solid var(--border-color); }
+        th { background: var(--bg-tertiary); font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; }
+        tr:hover td { background: rgba(249, 115, 22, 0.05); }
+        .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 500; }
+        .badge.confirmed { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); }
+        .badge.pending { background: rgba(245, 158, 11, 0.15); color: var(--accent-yellow); }
+        .badge.high { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); }
+        .badge.medium { background: rgba(245, 158, 11, 0.15); color: var(--accent-yellow); }
+        .badge.low { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); }
+        .badge.required { background: rgba(59, 130, 246, 0.15); color: var(--accent-blue); }
+        .badge.custom { background: rgba(139, 92, 246, 0.15); color: var(--accent-purple); }
+        .risk-box { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; padding: 24px; margin: 16px 0; }
+        .risk-box h4 { font-size: 1rem; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .risk-box.latency { border-left: 4px solid var(--accent-yellow); }
+        .risk-box.security { border-left: 4px solid var(--accent-green); }
+        .risk-box.compliance { border-left: 4px solid var(--accent-blue); }
+        .risk-box.operational { border-left: 4px solid var(--accent-purple); }
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .highlight-box { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; padding: 24px; margin: 24px 0; }
+        .highlight-box.warning { border-left: 4px solid var(--accent-yellow); }
+        .highlight-box.info { border-left: 4px solid var(--accent-blue); }
+        .highlight-box.danger { border-left: 4px solid var(--accent-red); }
+        code { font-family: 'IBM Plex Mono', monospace; background: var(--bg-tertiary); padding: 2px 8px; border-radius: 4px; font-size: 0.875rem; }
+        .legend { display: flex; flex-wrap: wrap; gap: 16px; padding: 20px; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; margin-bottom: 24px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.875rem; }
+        footer { background: var(--bg-secondary); border-top: 1px solid var(--border-color); padding: 40px 0; margin-top: 60px; }
+        footer .container { display: flex; justify-content: space-between; font-size: 0.875rem; color: var(--text-secondary); }
+        @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } .container { padding: 20px; } nav.doc-nav ul { padding: 0 20px; } }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div>
+                <div class="breadcrumb"><a href="00-executive-summary.html">← Back to Executive Summary</a></div>
+                <h1>Amazon Connect Integration</h1>
+            </div>
+            <span class="doc-num">Document 02</span>
+        </div>
+    </header>
+
+    <nav class="doc-nav">
+        <ul>
+            <li><a href="00-executive-summary.html">00 Summary</a></li>
+            <li><a href="01-overall-architecture.html">01 Architecture</a></li>
+            <li><a href="02-amazon-connect-integration.html" class="active">02 Connect</a></li>
+            <li><a href="03-voice-stack-architecture.html">03 Voice</a></li>
+            <li><a href="04-ml-services-architecture.html">04 ML</a></li>
+            <li><a href="05-realtime-dataflow-sequences.html">05 Data Flow</a></li>
+            <li><a href="06-data-security-architecture.html">06 Security</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="legend">
+            <div class="legend-item">⏱️ Latency Risk</div>
+            <div class="legend-item">🔒 Security Risk</div>
+            <div class="legend-item">📋 Compliance Risk</div>
+            <div class="legend-item">⚙️ Operational Risk</div>
+            <div class="legend-item">🟡 Requires Follow-up</div>
+        </div>
+
+        <section>
+            <h2>Integration Architecture Overview</h2>
+            
+            <div class="context-box">
+                <strong>Context:</strong> When a call arrives, the Contact Flow initiates media streaming to Kinesis Video Streams (KVS), then invokes a Lambda function to notify Cresta with stream metadata (streamARN, ContactId, startFragmentNum). Cresta consumes the audio stream and provides real-time guidance back to the agent through the Cresta Agent App, which integrates with the CCP workspace.
+            </div>
+
+            <div class="diagram-container">
+                <div class="diagram-title">Amazon Connect to Cresta Integration Flow</div>
+                <div class="mermaid">
+flowchart TB
+    subgraph AmazonConnect["Amazon Connect Instance"]
+        subgraph ContactFlow["Contact Flow Configuration"]
+            StartMedia["Start Media<br/>Streaming Block"]
+            SetAttributes["Set Contact<br/>Attributes"]
+            InvokeLambda["Invoke AWS<br/>Lambda"]
+            TransferAgent["Transfer to<br/>Agent Queue"]
+            StopMedia["Stop Media<br/>Streaming Block"]
+        end
+
+        subgraph MediaStreaming["Media Streaming"]
+            KVS["Kinesis Video<br/>Streams"]
+            KVSProducer["KVS Producer"]
+            AudioTracks["Multi-Track Audio"]
+        end
+
+        subgraph AgentSide["Agent Desktop"]
+            CCP["Contact Control<br/>Panel"]
+            AgentAudio["Agent Audio"]
+        end
+    end
+
+    subgraph AWSServices["AWS Services"]
+        Lambda["AWS Lambda<br/>Trigger Function"]
+        IAMRole["IAM Role"]
+    end
+
+    subgraph CrestaIngestion["Cresta Audio Ingestion"]
+        CrestaEndpoint["Cresta WebSocket<br/>Endpoint"]
+        AgentApp["Cresta Agent App"]
+        GoWalter["gowalter"]
+    end
+
+    StartMedia --> SetAttributes --> InvokeLambda --> TransferAgent --> StopMedia
+    StartMedia --> KVSProducer --> KVS --> AudioTracks
+    InvokeLambda --> Lambda --> IAMRole --> KVS
+    AudioTracks --> CrestaEndpoint --> GoWalter
+    CCP --> AgentApp --> GoWalter
+                </div>
+            </div>
+
+            <h3>Integration Component Reference</h3>
+            <table>
+                <thead>
+                    <tr><th>Component</th><th>Type</th><th>Function</th><th>Owner</th><th>Status</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><strong>Contact Flow</strong></td><td>Amazon Connect</td><td>IVR logic, call routing, media streaming initiation</td><td>Customer</td><td><span class="badge confirmed">✓ Documented</span></td></tr>
+                    <tr><td><strong>Start Media Streaming</strong></td><td>Flow Block</td><td>Initiates KVS streaming for call audio</td><td>Customer</td><td><span class="badge confirmed">✓ Documented</span></td></tr>
+                    <tr><td><strong>Kinesis Video Streams</strong></td><td>AWS Service</td><td>Real-time audio transport (8kHz PCM, dual-track)</td><td>AWS</td><td><span class="badge confirmed">✓ Documented</span></td></tr>
+                    <tr><td><strong>Lambda Function</strong></td><td>AWS Lambda</td><td>Notifies Cresta with stream metadata</td><td>Customer/Cresta</td><td><span class="badge pending">🟡 Verify provider</span></td></tr>
+                    <tr><td><strong>IAM Role</strong></td><td>AWS IAM</td><td>Cross-account KVS access permissions</td><td>Customer</td><td><span class="badge pending">🟡 Verify config</span></td></tr>
+                    <tr><td><strong>Cresta Endpoint</strong></td><td>WebSocket</td><td>Receives audio stream from KVS or Lambda</td><td>Cresta</td><td><span class="badge pending">🟡 Verify method</span></td></tr>
+                    <tr><td><strong>Agent App</strong></td><td>Desktop Application</td><td>Real-time guidance display, optional audio capture</td><td>Cresta</td><td><span class="badge pending">🟡 Verify deployment</span></td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>Integration Methods</h2>
+            <div class="two-col">
+                <div class="highlight-box info">
+                    <h3>Option A: Direct CCaaS Stream (Preferred)</h3>
+                    <p>Amazon Connect streams audio directly to Cresta via Kinesis Video Streams.</p>
+                    <table>
+                        <tr><td><strong>Step 1</strong></td><td>Contact Flow triggers "Start Media Streaming" block</td></tr>
+                        <tr><td><strong>Step 2</strong></td><td>Audio captured at 8kHz PCM, dual-track</td></tr>
+                        <tr><td><strong>Step 3</strong></td><td>Lambda passes streamARN and ContactId to Cresta</td></tr>
+                        <tr><td><strong>Step 4</strong></td><td>Cresta consumes stream via WebSocket/GetMedia API</td></tr>
+                    </table>
+                    <p style="margin-top: 16px;"><strong>Advantages:</strong> Lower latency, server-side processing, no desktop dependency</p>
+                </div>
+                <div class="highlight-box warning">
+                    <h3>Option B: Agent App Capture (Fallback) 🟡</h3>
+                    <p>For CCaaS platforms that don't provide audio streams, Cresta Agent App captures from desktop.</p>
+                    <table>
+                        <tr><td><strong>Step 1</strong></td><td>Agent App installed on agent desktop</td></tr>
+                        <tr><td><strong>Step 2</strong></td><td>Captures system audio (mic + speakers)</td></tr>
+                        <tr><td><strong>Step 3</strong></td><td>gowalter receives audio via direct upload</td></tr>
+                    </table>
+                    <p style="margin-top: 16px;"><strong>⚠️ Requires Verification:</strong> Confirm which method Amazon Connect integration uses.</p>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>Contact Flow Configuration</h2>
+            <div class="diagram-container">
+                <div class="diagram-title">Recommended Contact Flow Structure</div>
+                <div class="mermaid">
+flowchart LR
+    Entry["Entry Point"] --> SetLang["Set Voice"]
+    SetLang --> StartStream["Start Media<br/>Streaming"]
+    StartStream --> SetCresta["Set Contact<br/>Attributes"]
+    SetCresta --> TriggerLambda["Invoke Lambda"]
+    TriggerLambda --> PlayPrompt["Play Prompt"]
+    PlayPrompt --> Queue["Transfer to<br/>Queue"]
+    Queue --> AgentConnect["Agent<br/>Connected"]
+    AgentConnect --> EndContact["End Contact"]
+    EndContact --> StopStream["Stop Media<br/>Streaming"]
+                </div>
+            </div>
+
+            <h3>Required Contact Attributes</h3>
+            <table>
+                <thead>
+                    <tr><th>Attribute</th><th>Source</th><th>Type</th><th>Purpose</th><th>Example</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>streamARN</code></td><td>Connect System</td><td><span class="badge required">System</span></td><td>KVS stream identifier</td><td><code>arn:aws:kinesisvideo:us-west-2:...</code></td></tr>
+                    <tr><td><code>startFragmentNum</code></td><td>Connect System</td><td><span class="badge required">System</span></td><td>Starting point in stream</td><td><code>91343852333181432392...</code></td></tr>
+                    <tr><td><code>ContactId</code></td><td>Connect System</td><td><span class="badge required">System</span></td><td>Unique call identifier</td><td><code>abc123-def456-ghi789</code></td></tr>
+                    <tr><td><code>CustomerPhoneNumber</code></td><td>Connect System</td><td><span class="badge required">System</span></td><td>Caller ANI</td><td><code>+14155551234</code></td></tr>
+                    <tr><td><code>InstanceId</code></td><td>Connect System</td><td><span class="badge required">System</span></td><td>Connect instance ID</td><td><code>aaaaaaaa-bbbb-cccc-...</code></td></tr>
+                    <tr><td><code>CrestaCustomerId</code></td><td>User-Defined</td><td><span class="badge custom">Custom 🟡</span></td><td>Cresta tenant ID</td><td><code>acme-corp</code></td></tr>
+                    <tr><td><code>CrestaProfileId</code></td><td>User-Defined</td><td><span class="badge custom">Custom 🟡</span></td><td>Team mapping</td><td><code>sales-team-a</code></td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>KVS Configuration</h2>
+            <table>
+                <thead><tr><th>Parameter</th><th>Value</th><th>Description</th><th>POC Impact</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Sample Rate</strong></td><td>8 kHz</td><td>Standard telephony rate</td><td>ASR optimized for 8kHz</td></tr>
+                    <tr><td><strong>Encoding</strong></td><td>PCM</td><td>Uncompressed audio</td><td>No transcoding needed</td></tr>
+                    <tr><td><strong>AUDIO_TO_CUSTOMER</strong></td><td>Track 1</td><td>Agent speech + prompts</td><td>Speaker diarization</td></tr>
+                    <tr><td><strong>AUDIO_FROM_CUSTOMER</strong></td><td>Track 2</td><td>Customer speech</td><td>Speaker diarization</td></tr>
+                    <tr><td><strong>Retention</strong></td><td>Customer-defined</td><td>Audio retention in KVS</td><td>Configure for compliance</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>Risk Assessment</h2>
+            <div class="two-col">
+                <div class="risk-box latency">
+                    <h4>⏱️ Latency Risks</h4>
+                    <table>
+                        <tr><td>KVS to Cresta Network</td><td><span class="badge medium">Medium</span></td><td>&lt;100ms target</td></tr>
+                        <tr><td>Lambda Cold Start</td><td><span class="badge low">Low</span></td><td>&lt;1s</td></tr>
+                        <tr><td>Audio Chunk Delivery</td><td><span class="badge medium">Medium</span></td><td>20-100ms</td></tr>
+                    </table>
+                </div>
+                <div class="risk-box security">
+                    <h4>🔒 Security Risks</h4>
+                    <table>
+                        <tr><td>Cross-Account KVS</td><td><span class="badge medium">Medium</span></td><td>IAM least privilege</td></tr>
+                        <tr><td>Audio in Transit</td><td><span class="badge low">Low</span></td><td>TLS 1.2+ mandatory</td></tr>
+                        <tr><td>API Authentication</td><td><span class="badge pending">🟡 Verify</span></td><td>Confirm method</td></tr>
+                    </table>
+                </div>
+            </div>
+            <div class="two-col">
+                <div class="risk-box compliance">
+                    <h4>📋 Compliance Risks</h4>
+                    <table>
+                        <tr><td>Recording Consent</td><td><span class="badge medium">Medium</span></td><td>Two-party consent</td></tr>
+                        <tr><td>Data Residency</td><td><span class="badge low">Low</span></td><td>Regional deployment</td></tr>
+                        <tr><td>PII in Transcripts</td><td><span class="badge low">Low</span></td><td>Auto-redaction</td></tr>
+                    </table>
+                </div>
+                <div class="risk-box operational">
+                    <h4>⚙️ Operational Risks</h4>
+                    <table>
+                        <tr><td>KVS Quotas</td><td><span class="badge low">Low</span></td><td>Monitor limits</td></tr>
+                        <tr><td>Lambda Throttling</td><td><span class="badge low">Low</span></td><td>Reserved concurrency</td></tr>
+                        <tr><td>Cresta Availability</td><td><span class="badge pending">🟡 Verify</span></td><td>Failover behavior</td></tr>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>Items Requiring Follow-up 🟡</h2>
+            <div class="highlight-box danger">
+                <ol style="padding-left: 20px; color: var(--text-secondary);">
+                    <li><strong>KVS Consumer Implementation:</strong> Does Cresta use Lambda consumer or direct GetMedia API?</li>
+                    <li><strong>Authentication Method:</strong> API Key, OAuth, or IAM-based auth to Cresta endpoints?</li>
+                    <li><strong>Contact Attribute Mapping:</strong> What custom attributes are required for Cresta tenant routing?</li>
+                    <li><strong>Failover Behavior:</strong> Does call continue if Cresta stream fails?</li>
+                    <li><strong>Multi-Region Setup:</strong> How is traffic routed for multi-region Connect deployments?</li>
+                </ol>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div>Cresta AI Platform Assessment - Document 02: Amazon Connect Integration</div>
+            <div>Generated: January 2025</div>
+        </div>
+    </footer>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            themeVariables: {
+                primaryColor: '#f97316',
+                primaryTextColor: '#f3f4f6',
+                primaryBorderColor: '#374151',
+                lineColor: '#6b7280',
+                secondaryColor: '#1f2937',
+                tertiaryColor: '#111827',
+                background: '#111827',
+                mainBkg: '#1f2937',
+                nodeBorder: '#374151',
+                clusterBkg: '#1f2937',
+                clusterBorder: '#374151'
+            },
+            flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'basis' },
+            securityLevel: 'loose'
+        });
+    </script>
+</body>
+</html>

@@ -494,10 +494,32 @@ Cresta AI provides a unified conversational AI platform for contact centers, off
 - No direct system access for testing
 - Assessment reflects 2024-2025 state of platform
 
+**Verification Status:**
+
+**✅ Confirmed via Public Sources:**
+- AWS migration and PyTorch/TorchServe infrastructure (AWS ML Blog)
+- Ocean-1 foundation model (Mistral 7B base, Fireworks hosting) - Cresta blog + web search
+- Compliance certifications (SOC 2, ISO 27001/27701/42001, PCI-DSS, HIPAA) - Cresta Trust Center
+- Platform hosting on AWS EKS - Cresta blog
+- Customer isolation (separate databases) - Cresta blog
+- Core technology stack (PostgreSQL, Redis, Elasticsearch, ClickHouse, S3) - Cresta blog
+
+**🟡 Requires Cresta Confirmation:**
+- Exact KVS integration method (Lambda vs direct API)
+- Authentication mechanism (API keys, OAuth, IAM)
+- Audio format sample rate (8kHz PCM assumed but not explicitly confirmed in AWS docs)
+- Agent App deployment method for Amazon Connect
+- Failover behavior when Cresta is unreachable
+- Model inventory and complete feature list
+- Published latency SLAs (targets documented but SLAs require confirmation)
+- SSO providers, SIEM integration, APAC region availability
+- Data retention defaults and archive strategies
+
 **Next Steps:**
 1. Request access to internal documentation
-2. Schedule technical deep-dive sessions
-3. Conduct hands-on evaluation if possible
-4. Review customer case studies and testimonials
+2. Schedule technical deep-dive sessions (see [09-cresta-technical-sessions-agenda.md](09-cresta-technical-sessions-agenda.md))
+3. Send feature documentation and integration guide requests (see [07-cresta-feature-documentation-request.md](07-cresta-feature-documentation-request.md), [08-cresta-amazon-connect-integration-request.md](08-cresta-amazon-connect-integration-request.md))
+4. Conduct hands-on evaluation if possible
+5. Review customer case studies and testimonials
 
 ---

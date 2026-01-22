@@ -356,7 +356,31 @@ flowchart TB
 ## Items Requiring Follow-up 🟡
 
 1. **ASR Provider Selection** - Is Deepgram the only ASR or are there alternatives (Amazon Transcribe)?
-2. **Audio Format** - Exact codec and sample rate from Amazon Connect KVS
+2. **Audio Format** - Exact codec and sample rate from Amazon Connect KVS (8kHz PCM assumed but requires verification)
 3. **Buffer Size Limits** - How much audio is buffered for recovery?
 4. **Multi-Language Support** - How is language detection handled for ASR?
 5. **ASR Failover** - What happens if Deepgram is unavailable?
+
+---
+
+## Summary
+
+This document describes the voice processing pipeline that converts audio streams into transcripts and triggers downstream ML services for real-time agent assistance.
+
+**Key Processing Pipeline**:
+1. **Audio Ingestion**: Audio chunks (20-100ms) received via WebSocket from KVS or Agent App
+2. **ASR Processing**: Deepgram streaming ASR produces partial transcripts (0.5-1.5s) and final transcripts (3-7s)
+3. **Transcript Refinement**: Utterance builder groups chunks, speaker diarization separates customer/agent
+4. **Persistence**: Transcripts stored in PostgreSQL, indexed in Elasticsearch, analytics in ClickHouse
+5. **Event Publishing**: Transcript events trigger ML inference via Orchestrator
+
+**Recovery Mechanisms**:
+- **WebSocket Recovery**: gowalter buffers audio and replays on ASR disconnection
+- **Audio Redaction**: PII detection and redaction (audio beeps + text masking) with Temporal workflow verification
+
+**Performance Targets** (from Cresta documentation):
+- ASR partial latency: 200-300ms
+- End-to-end guidance: <1.5s
+- Utterance update to Agent App: ~1s
+
+**Verification Status**: Pipeline structure is logical and consistent with real-time requirements. Deepgram as ASR provider is confirmed via Cresta blog. Exact buffer sizes, recovery behavior, and audio format specifications require Cresta confirmation.

@@ -405,3 +405,25 @@ flowchart LR
 4. **Circuit Breakers** - Are there circuit breakers for external services?
 5. **Metric Collection** - How are latency metrics captured and monitored?
 6. **SLA Definitions** - Published SLAs for real-time guidance latency
+
+---
+
+## Summary
+
+This document provides sequence diagrams for key real-time data flows in the Cresta platform, focusing on latency-critical paths and end-to-end guidance delivery.
+
+**Key Flows Documented**:
+1. **End-to-End Real-Time Guidance**: Customer speech → KVS → gowalter → ASR → apiserver → Orchestrator → ML Services → clientsubscription → Agent App (target <1.5s)
+2. **Knowledge Assist (RAG)**: Question detection → RAG pipeline → Knowledge Base search → Ocean-1 generation → Agent App (target <500ms)
+3. **Call Summarization**: Call end → Audio encoding/redaction → Ocean-1 summarization → Agent App (within seconds of disconnect)
+4. **Real-Time Translation**: Multi-language call handling with STT, translation, and TTS (TTS playback method requires verification)
+5. **Agent App Event Subscription**: WebSocket-based real-time updates (transcripts, ML actions, call status)
+6. **Error Recovery**: ASR disconnection → gowalter buffer replay → transcript continuity
+
+**Latency Budget Breakdown** (Target: <1.5s total):
+- Audio Processing: 0-150ms (capture + network to Cresta)
+- ASR Processing: 150-500ms (ASR processing + transcript delivery)
+- ML Inference: 500-1100ms (orchestrator routing + model inference + result aggregation)
+- Delivery: 1100-1250ms (event publish + WebSocket to App + UI render)
+
+**Verification Status**: Flow sequences are logically structured and consistent with real-time requirements. Latency targets are documented but should be verified against Cresta published SLAs. Translation flow includes TTS and audio playback components that require Cresta confirmation.

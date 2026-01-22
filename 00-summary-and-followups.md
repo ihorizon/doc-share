@@ -17,6 +17,24 @@
 
 ---
 
+## ⚠️ Critical Verification Notes
+
+**Important**: This documentation is based on publicly available information, Cresta blog posts, AWS documentation, and logical inference. The following items require direct confirmation from Cresta:
+
+1. **Audio Format Specification**: AWS documentation confirms Amazon Connect streams audio in PCM format to KVS, but does not explicitly state the sample rate (8kHz). This should be verified with Cresta or AWS support.
+
+2. **KVS Integration Method**: The exact mechanism by which Cresta consumes KVS streams (Lambda consumer vs direct GetMedia API) is not publicly documented and requires Cresta confirmation.
+
+3. **Authentication Mechanism**: The specific authentication method (API keys, OAuth, IAM) for Connect/Lambda to authenticate with Cresta endpoints is not documented and requires verification.
+
+4. **Failover Behavior**: The behavior when Cresta is unreachable during a call (call continuity, transcript gaps, agent experience) requires Cresta confirmation.
+
+5. **Agent App Deployment**: The exact deployment method (browser extension, desktop app, embedded CCP) for Amazon Connect integration requires verification.
+
+**Documentation Status**: All documents use consistent terminology and architecture patterns. Where information is inferred or not explicitly confirmed, it is marked with 🟡 (requires verification) indicators.
+
+---
+
 ## Confirmed Architecture Details
 
 ### From Cresta Documentation (High Confidence)
@@ -34,21 +52,23 @@
 | **Search** | Elasticsearch | Cresta blog |
 | **Analytics** | ClickHouse | Cresta blog |
 | **Audio Storage** | AWS S3 (encrypted) | Cresta blog |
-| **Foundation Model** | Ocean-1 (Mistral 7B fine-tuned) | Cresta blog |
-| **Model Hosting** | Fireworks AI (with LoRA adapters) | Cresta blog, Fireworks |
+| **Foundation Model** | Ocean-1 (Mistral 7B fine-tuned) | Cresta blog | ✅ Confirmed via web search |
+| **Model Hosting** | Fireworks AI (with LoRA adapters) | Cresta blog, Fireworks | ✅ Confirmed via web search |
+| **ML Framework** | PyTorch with TorchServe | AWS ML Blog | ✅ Confirmed via web search |
+| **Infrastructure Migration** | Consolidated from multi-cloud to AWS | AWS ML Blog | ✅ Confirmed via web search |
 | **PII Redaction** | Audio beeps + text masking | Cresta blog |
 | **Redaction Verification** | Temporal workflows | Cresta blog |
 | **Certifications** | SOC 2 Type II, ISO 27001/27701/42001, PCI-DSS, HIPAA | Cresta Trust Center |
 
 ### From Amazon Connect Documentation (High Confidence)
 
-| Component | Detail | Source |
-|-----------|--------|--------|
-| **Audio Streaming** | Kinesis Video Streams | AWS Docs |
-| **Audio Format** | 8kHz PCM | AWS Docs |
-| **Track Separation** | AUDIO_TO_CUSTOMER, AUDIO_FROM_CUSTOMER | AWS Docs |
-| **Integration Method** | Contact Flow + Lambda trigger | AWS Docs |
-| **Contact Attributes** | streamARN, startFragmentNum, ContactId | AWS Docs |
+| Component | Detail | Source | Verification Status |
+|-----------|--------|--------|---------------------|
+| **Audio Streaming** | Kinesis Video Streams | AWS Docs | ✅ Confirmed |
+| **Audio Format** | Raw PCM (exact sample rate not explicitly documented) | AWS Docs | 🟡 **Note**: AWS docs confirm PCM format but do not explicitly state 8kHz - requires verification |
+| **Track Separation** | AUDIO_TO_CUSTOMER, AUDIO_FROM_CUSTOMER | AWS Docs | ✅ Confirmed |
+| **Integration Method** | Contact Flow + Lambda trigger | AWS Docs | ✅ Confirmed |
+| **Contact Attributes** | streamARN, startFragmentNum, ContactId | AWS Docs | ✅ Confirmed |
 
 ---
 
@@ -150,6 +170,84 @@
    - Establish success metrics
    - Send [Feature Documentation Request](07-cresta-feature-documentation-request.md) and [Integration Guide Request](08-cresta-amazon-connect-integration-request.md) to Cresta
    - Schedule technical sessions per [09-cresta-technical-sessions-agenda.md](09-cresta-technical-sessions-agenda.md)
+
+---
+
+## Document Summaries by Area
+
+### 01 - Overall Architecture
+**Summary**: High-level system architecture showing integration between Amazon Connect, Cresta platform components (voice stack, ML services, data stores), and external AI services. Documents customer-specific subdomain routing, multi-tenant isolation, and end-to-end data flows.
+
+**Key Components Documented**:
+- Traffic management (DNS, ELB, NGINX Ingress + Wallarm WAF)
+- Voice stack (gowalter, Deepgram ASR, apiserver)
+- ML services (Orchestrator, ML Router, Ocean-1 model, LoRA adapters)
+- Data layer (PostgreSQL, Redis Streams, Elasticsearch, ClickHouse, S3)
+- External dependencies (Fireworks AI, Cartesia)
+
+**Verification Status**: Architecture components align with confirmed Cresta blog and AWS documentation. Service names (gowalter, apiserver, clientsubscription) are consistent across documents but exact implementation details require Cresta confirmation.
+
+### 02 - Amazon Connect Integration
+**Summary**: Detailed integration architecture between Amazon Connect and Cresta, including Contact Flow configuration, KVS audio streaming, Lambda triggers, and authentication mechanisms.
+
+**Key Integration Points**:
+- Contact Flow blocks and execution order
+- KVS audio stream consumption (method requires verification)
+- Contact attribute mapping (system + custom)
+- Authentication and security (method requires verification)
+- Failover and error handling (behavior requires verification)
+
+**Verification Status**: Contact Flow structure and KVS integration approach are documented per AWS patterns, but specific Cresta implementation details (Lambda vs direct API, auth method, failover behavior) require confirmation from Cresta.
+
+**Critical Gap**: Audio format specification - AWS docs confirm PCM but do not explicitly state 8kHz sample rate. This should be verified with Cresta or AWS.
+
+### 03 - Voice Stack Architecture
+**Summary**: Audio processing pipeline from ingestion through ASR to transcript persistence, including WebSocket recovery mechanisms, PII redaction, and audio storage.
+
+**Key Processing Stages**:
+- Audio ingestion (20-100ms chunks)
+- ASR processing (Deepgram, partial/final transcripts)
+- Utterance building and speaker diarization
+- Transcript persistence and event publishing
+- Audio redaction and verification (Temporal workflows)
+
+**Verification Status**: Processing pipeline structure is logical and consistent with real-time requirements. Deepgram as ASR provider is confirmed. Exact buffer sizes, recovery behavior, and multi-language support require Cresta confirmation.
+
+### 04 - ML Services Architecture
+**Summary**: ML inference architecture including policy-based model selection, inference graph execution, Ocean-1 foundation model with LoRA adapters, and batching strategies.
+
+**Key ML Components**:
+- Policy engine (agent/team/org-level policies)
+- ML Router and shard management
+- Model shards (GPU/CPU pods)
+- Ocean-1 foundation model (Mistral 7B base, Fireworks hosting)
+- LoRA adapters for customer-specific fine-tuning
+
+**Verification Status**: Ocean-1 model details (Mistral 7B base, Fireworks hosting) confirmed via web search. Model inventory, latency SLAs, and scaling rules require Cresta confirmation.
+
+### 05 - Real-Time Data Flows
+**Summary**: Sequence diagrams for end-to-end real-time guidance, Knowledge Assist (RAG), call summarization, translation, agent app event subscription, and error recovery flows.
+
+**Key Flows Documented**:
+- Real-time guidance (target <1.5s latency)
+- Knowledge Assist RAG (target <500ms)
+- Call summarization (end-of-call)
+- Translation flow (requires verification)
+- Error recovery mechanisms
+
+**Verification Status**: Flow sequences are logically structured. Latency targets are documented but should be verified against Cresta SLAs. Translation flow includes components (TTS, audio playback) that require verification.
+
+### 06 - Data & Security Architecture
+**Summary**: Data storage architecture, security controls, PII redaction pipeline, regional data residency, compliance framework, and data retention policies.
+
+**Key Security & Compliance Elements**:
+- Customer data isolation (separate databases, S3 paths, ES indices)
+- Security controls (WAF, TLS, encryption at rest/transit, RBAC)
+- PII redaction (NER, regex, ML detection, audio beeps, text masking)
+- Compliance certifications (SOC 2, ISO 27001/27701/42001, PCI-DSS, HIPAA)
+- Regional data residency (US, EU confirmed; APAC requires verification)
+
+**Verification Status**: Compliance certifications are confirmed via Cresta Trust Center. Data isolation approach is consistent with Cresta blog. SSO providers, SIEM integration, APAC region availability, and data retention defaults require Cresta confirmation.
 
 ---
 

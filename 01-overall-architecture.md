@@ -203,3 +203,31 @@ flowchart TB
 2. **Agent App deployment** - Is it a browser extension, standalone desktop app, or embedded in CCP?
 3. **Authentication flow** - How does Connect authenticate with Cresta endpoints?
 4. **Failover handling** - What happens if Cresta is unreachable during a call?
+
+---
+
+## Summary
+
+This document provides a high-level overview of the complete Cresta AI platform architecture, showing how Amazon Connect integrates with Cresta's voice processing, ML services, and data storage layers to deliver real-time agent assistance.
+
+**Architecture Layers**:
+1. **Customer Environment**: Customer initiates calls via phone/chat
+2. **Amazon Connect (AWS)**: Contact Flow, KVS audio streaming, Agent Workspace/CCP
+3. **Cresta Platform (AWS Hosted)**: 
+   - Traffic Management (DNS, ELB, NGINX Ingress + Wallarm WAF)
+   - Voice Stack (gowalter, Deepgram ASR, apiserver)
+   - Business Logic (Orchestrator, clientsubscription, Search Policies)
+   - ML Services (ML Router, Model Shards, Ocean-1, LoRA adapters)
+   - Data Layer (PostgreSQL, Redis Streams, Elasticsearch, ClickHouse, S3)
+   - Agent Application (Cresta Agent App)
+4. **External AI Services**: Fireworks AI (Ocean-1 hosting), Cartesia (Voice TTS)
+
+**Key Integration Points**:
+- **Audio Flow**: Connect → KVS → Cresta ingress → gowalter → ASR → apiserver
+- **ML Inference**: Transcript events → Orchestrator → ML Router → Model Shards → Fireworks AI
+- **Real-Time Delivery**: ML results → clientsubscription → Redis Streams → Agent App (WebSocket)
+- **Data Persistence**: Transcripts → PostgreSQL, Audio → S3, Analytics → ClickHouse, Search → Elasticsearch
+
+**Customer Isolation**: Separate databases per customer, customer-specific subdomains (customer.region.cresta.ai), logical separation in Kubernetes namespaces.
+
+**Verification Status**: Architecture components align with confirmed Cresta blog posts and AWS documentation. Service names (gowalter, apiserver, clientsubscription) are consistent across documents. Exact implementation details (KVS consumption method, authentication, failover behavior) require Cresta confirmation.

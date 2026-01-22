@@ -505,3 +505,30 @@ sequenceDiagram
 4. **Model Versioning** - How are model updates rolled out?
 5. **Fallback Models** - What happens if a custom model fails?
 6. **Accuracy Metrics** - Current production accuracy for each model type
+
+---
+
+## Summary
+
+This document describes the ML inference architecture that processes transcripts to generate real-time guidance, knowledge assist, and conversation intelligence for agents.
+
+**Key ML Architecture Components**:
+1. **Policy Engine**: Customer-specific policies (agent/team/org level) determine which models run and when
+2. **Inference Graph**: Multi-stage execution (parallel fast models → sequential dependent models → conditional generative models)
+3. **ML Router**: Routes requests to appropriate shards based on customer mapping and load balancing
+4. **Model Shards**: Kubernetes pods (GPU/CPU) hosting specialized models (intent, sentiment, entity extraction, generative AI)
+5. **Ocean-1 Foundation Model**: Mistral 7B base model fine-tuned for contact centers, hosted on Fireworks AI with LoRA adapters per customer
+
+**Ocean-1 Model Details** (Confirmed via web search):
+- **Base Model**: Mistral 7B
+- **Fine-tuning**: Contact center domain data + instruction tuning + RLHF
+- **Customer Adaptation**: LoRA adapters trained on customer-specific data
+- **Hosting**: Fireworks AI with multi-LoRA serving (1000s of adapters)
+- **Use Cases**: Knowledge Assist (RAG), summarization, chat suggestions, response generation
+
+**Performance Characteristics**:
+- **Batching**: 100-200ms collection window for throughput optimization
+- **Real-time Mode**: Direct forwarding bypassing batcher for low-latency requests
+- **Target Latencies**: <500ms for Knowledge Assist, <200ms for agent assist suggestions (per Cresta-review.md)
+
+**Verification Status**: Ocean-1 model architecture (Mistral 7B base, Fireworks hosting, LoRA adapters) confirmed via Cresta blog and web search. Model inventory, exact latency SLAs, scaling rules, and accuracy metrics require Cresta confirmation.

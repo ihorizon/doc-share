@@ -234,3 +234,25 @@ flowchart LR
 3. **Contact Attribute Mapping** - What custom attributes are required for Cresta?
 4. **Failover Behavior** - Does call continue if Cresta stream fails?
 5. **Multi-Region Setup** - How is traffic routed for multi-region Connect deployments?
+6. **Audio Format Verification** - AWS docs confirm PCM format but do not explicitly state 8kHz sample rate. This should be verified with Cresta or AWS support.
+
+---
+
+## Summary
+
+This document describes the integration architecture between Amazon Connect and Cresta AI, focusing on the audio streaming path via Kinesis Video Streams (KVS), Contact Flow configuration, and authentication mechanisms.
+
+**Key Integration Components**:
+- **Contact Flow**: Configures audio streaming initiation, contact attribute setting, and Lambda trigger invocation
+- **KVS**: Streams audio from Connect to Cresta (PCM format - exact sample rate requires verification)
+- **Lambda Function**: Triggered by Contact Flow to pass stream metadata to Cresta (exact implementation requires verification)
+- **Cresta Endpoint**: Receives audio stream via WebSocket/HTTP/2 (customer.region.cresta.ai pattern)
+
+**Critical Unknowns**:
+- Exact KVS consumption method (Lambda vs direct API)
+- Authentication mechanism (API key, OAuth, IAM)
+- Audio format sample rate (8kHz assumed but not explicitly confirmed in AWS docs)
+- Failover behavior when Cresta is unreachable
+- Agent App deployment method for Connect integration
+
+**Verification Status**: Architecture follows AWS best practices and documented patterns, but specific Cresta implementation details require direct confirmation from Cresta technical team.

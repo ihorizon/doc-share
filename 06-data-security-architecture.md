@@ -545,3 +545,36 @@ flowchart TB
 5. **Archive Strategy** - Is S3 Glacier used for long-term audio storage?
 6. **Deletion Process** - What is the process for customer data deletion requests?
 7. **Backup RPO/RTO** - What are the backup and recovery objectives?
+
+---
+
+## Summary
+
+This document describes the data storage architecture, security controls, compliance framework, and data lifecycle management for the Cresta platform.
+
+**Data Storage Architecture**:
+- **Operational Stores**: PostgreSQL (conversations, transcripts, users, policies), Redis (event streams, session cache, policy cache)
+- **Analytics Stores**: Elasticsearch (conversation search, full-text index), ClickHouse (analytics, metrics, aggregations)
+- **Object Storage**: AWS S3 (encrypted audio files, model artifacts)
+- **Customer Isolation**: Separate databases, S3 paths, and ES indices per customer
+
+**Security Controls**:
+- **Perimeter**: Wallarm WAF, DDoS protection, TLS 1.2+ termination
+- **Network**: AWS VPC, private subnets, security groups, NACLs
+- **Identity**: AWS IAM roles, Cresta RBAC, SSO integration (providers require verification), MFA (requires verification)
+- **Data Protection**: AWS KMS encryption keys, AES-256 at rest, TLS in transit, PII redaction
+
+**PII Redaction Pipeline**:
+- **Detection**: Named Entity Recognition (NER), regex patterns (SSN, credit card, phone), ML-based detection
+- **Redaction**: Text masking (replace with tags), audio beeping (mute segments)
+- **Verification**: Temporal workflow re-scans for missed PII, retry on failure, manual review queue
+
+**Compliance Framework** (Confirmed via Cresta Trust Center):
+- **Certifications**: SOC 2 Type II, ISO 27001 (Information Security), ISO 27701 (Privacy), ISO 42001 (AI Management), PCI-DSS, HIPAA (BAA available)
+- **Regional Data Residency**: US (us-west-2), EU (eu-west-1) confirmed; APAC (ap-southeast-1) requires verification
+
+**Data Retention & Lifecycle**:
+- **Retention**: Customer-configurable (defaults require verification)
+- **Lifecycle**: Active storage → Archive (S3 Glacier assumed, requires verification) → Secure deletion
+
+**Verification Status**: Compliance certifications confirmed via Cresta Trust Center. Data isolation approach consistent with Cresta blog. SSO providers, SIEM integration, APAC region availability, data retention defaults, archive strategy, and backup RPO/RTO require Cresta confirmation.

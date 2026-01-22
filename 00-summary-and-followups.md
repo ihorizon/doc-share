@@ -10,6 +10,10 @@
 | 04 | [ML Services Architecture](04-ml-services-architecture.md) | Model serving and inference |
 | 05 | [Real-Time Data Flows](05-realtime-dataflow-sequences.md) | Sequence diagrams for key flows |
 | 06 | [Data & Security](06-data-security-architecture.md) | Storage, compliance, security |
+| 07 | [Cresta Feature Documentation Request](07-cresta-feature-documentation-request.md) | Request for feature catalog and capabilities |
+| 08 | [Cresta Amazon Connect Integration Request](08-cresta-amazon-connect-integration-request.md) | Request for integration guide and setup |
+| 09 | [Cresta Technical Sessions Agenda](09-cresta-technical-sessions-agenda.md) | Agenda and prep for technical sessions |
+| 10 | [POC Test Scenarios](10-poc-test-scenarios.md) | POC test scenarios, success criteria, validation |
 
 ---
 
@@ -142,8 +146,10 @@
 
 4. **POC Planning**
    - Define pilot scope (agent count, call volume)
-   - Identify test scenarios
+   - Identify test scenarios ([10-poc-test-scenarios.md](10-poc-test-scenarios.md))
    - Establish success metrics
+   - Send [Feature Documentation Request](07-cresta-feature-documentation-request.md) and [Integration Guide Request](08-cresta-amazon-connect-integration-request.md) to Cresta
+   - Schedule technical sessions per [09-cresta-technical-sessions-agenda.md](09-cresta-technical-sessions-agenda.md)
 
 ---
 

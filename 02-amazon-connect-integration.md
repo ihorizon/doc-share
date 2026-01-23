@@ -250,10 +250,10 @@ This document describes the integration architecture between Amazon Connect and 
 
 **Critical Unknowns**:
 - Exact KVS consumption method (Lambda vs direct API)
-- Authentication mechanism (API key, OAuth, IAM)
+- Authentication mechanism (API key, OAuth, IAM) - **Note**: SDK guide confirms BYOID (OIDC), SAML, Twilio Flex token exchange; Connect-specific method still TBD
 - Audio format: ✅ PCM linear16 (16-bit PCM) confirmed. Sample rate (8kHz) still requires verification.
 - Failover behavior when Cresta is unreachable
-- Agent App deployment method for Connect integration
+- Agent App deployment method for Connect integration - **Note**: SDK guide covers SDK usage but not deployment (browser extension, desktop app, embedded CCP)
 
 **Verification Status**: Architecture follows AWS best practices and documented patterns, but specific Cresta implementation details require direct confirmation from Cresta technical team.
 
@@ -263,7 +263,7 @@ This document describes the integration architecture between Amazon Connect and 
 
 | Resource | Description | Notes |
 |----------|-------------|-------|
-| **Cresta Client SDK Developer Guide** | `Cresta Client SDK Developer Guide.pdf` (local) | Client/Agent App integration. **Age unknown** – PDF from Google Docs; confirm with Cresta that it’s current. See [references.md](references.md). |
+| **Cresta Client SDK Developer Guide** | `Cresta Client SDK Developer Guide.pdf` (local) | Client/Agent App integration. **Age unknown** – PDF from Google Docs; confirm with Cresta that it’s current. **✅ Analyzed** – See [14-cresta-sdk-developer-guide-analysis.md](14-cresta-sdk-developer-guide-analysis.md) for findings. |
 | **[Cresta GitHub](https://github.com/cresta)** | Cresta Intelligence, Inc. (verified cresta.com, cresta.ai) | Org-level validation. |
 | **[amazon-connect-pstn-transfer](https://github.com/cresta/amazon-connect-pstn-transfer)** | AWS resources for PSTN-only transfer with Amazon Connect | Relevant for Connect + Cresta PSTN transfer scenarios. |
 | **[CrestaVoice–Twilio Flex](https://github.com/cresta/CrestaVoice-TwilioFlexPluginIntegration-FollowTheAgent)** | Twilio Flex + Cresta Voice integration | Example CCaaS + Cresta integration pattern. |

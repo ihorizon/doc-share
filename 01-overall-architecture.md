@@ -234,4 +234,4 @@ This document provides a high-level overview of the complete Cresta AI platform 
 
 **Customer Isolation**: Separate databases per customer, customer-specific subdomains (customer.region.cresta.ai), logical separation in Kubernetes namespaces.
 
-**Verification Status**: Architecture components align with confirmed Cresta blog posts and AWS documentation. Service names (gowalter, apiserver, clientsubscription) are consistent across documents. Exact implementation details (KVS consumption method, authentication, failover behavior) require Cresta confirmation.
+**Verification Status**: Architecture components align with confirmed Cresta blog posts and AWS documentation. Service names (gowalter, apiserver, clientsubscription) are consistent across documents. **SDK Guide Analysis** ([14-cresta-sdk-developer-guide-analysis.md](14-cresta-sdk-developer-guide-analysis.md)) validates ClientSubscription WebSocket service, API endpoints, and Agent App integration patterns. Exact implementation details (KVS consumption method, Connect-specific authentication, failover behavior) require Cresta confirmation.

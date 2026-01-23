@@ -17,6 +17,7 @@
 | 11 | [Business Use Cases](11-business-use-cases.md) | Contact center business use cases |
 | 12 | [POC Test Scenarios](12-poc-test-scenarios.md) | Technical test scenarios, success criteria, validation |
 | 13 | [Proof of Concept Plan](13-proof-of-concept-plan.md) | Business-focused POC plan aligned with use cases |
+| 14 | [Cresta SDK Developer Guide Analysis](14-cresta-sdk-developer-guide-analysis.md) | Analysis of SDK guide validating architecture and adding SDK details |
 | — | [References](references.md) | Central index of all material references and what was referenced |
 
 ---
@@ -287,6 +288,28 @@
 - Compliance: SOC 2, ISO 27001/27701/42001, PCI-DSS, HIPAA, **TISAX, CCPA/CPRA, GDPR**
 
 **Verification Status**: Certifications, MFA, RTO, subprocessors, and expanded security confirmed via Trust Center. **SSO**: PingFederate confirmed for client-side implementation. Other SSO providers and SIEM integration require Cresta confirmation.
+
+### 14 - Cresta SDK Developer Guide Analysis
+**Summary**: Analysis of the Cresta Client SDK Developer Guide validating architecture documentation and extracting SDK-specific technical details.
+
+**Key Validations from SDK Guide**:
+- ✅ **ClientSubscription WebSocket service** confirmed (matches architecture docs)
+- ✅ **API endpoint pattern**: `https://api-CUSTOMER_ID.cresta.com`
+- ✅ **Voice session detection** via SDK (`onVoiceSession()` callback)
+- ✅ **Profile ID** required for chat and voice managers
+- ✅ **Authentication methods**: BYOID (OIDC), SAML, Twilio Flex token exchange, username/password
+
+**New SDK Information**:
+- SDK packages and versions (@cresta/client 0.21.0, @cresta/react-client 0.10.0, etc.)
+- WebSocket fallback mechanisms (SSE, polling)
+- Network configuration (timeout, retry delay)
+- Error handling patterns (ErrorManager)
+- Headless mode APIs for custom UI components
+- Compliance testing via emulator
+
+**Gaps**: SDK guide age unknown; doesn't detail Amazon Connect-specific patterns; doesn't specify Agent App deployment method.
+
+**Verification Status**: SDK guide validates core architecture components (clientsubscription, API endpoints, voice session detection). Connect-specific integration details still require Cresta confirmation.
 
 ---
 

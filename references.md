@@ -38,7 +38,7 @@ This document centralizes all material references used across the architecture a
 
 | File | Description | What Was Referenced | Notes |
 |------|-------------|---------------------|-------|
-| `Cresta Client SDK Developer Guide.pdf` | Client SDK developer guide | **Not yet fully analyzed** – PDF is binary; title and Google Docs export metadata only | Exported from Google Docs (Skia/PDF renderer). **Age unknown.** Use for Agent App / client integration details once text is extractable. Confirm with Cresta that this is the current version. |
+| `Cresta Client SDK Developer Guide.pdf` | Client SDK developer guide | **✅ Analyzed** – Text extracted via pdftotext. See [14-cresta-sdk-developer-guide-analysis.md](14-cresta-sdk-developer-guide-analysis.md) | Exported from Google Docs (Skia/PDF renderer). **Age unknown** – confirm currency with Cresta. **Key findings**: ClientSubscription WebSocket confirmed; API endpoints (`api-CUSTOMER_ID.cresta.com`); BYOID auth (OIDC); voice session detection; Profile ID required; SDK packages/versions. |
 
 **Documents referencing SDK guide:**  
 references.md (this file). Recommend adding to 02-amazon-connect-integration, 08-feature-request, 10-technical-sessions when used.
@@ -133,6 +133,7 @@ references.md (this file). Recommend referencing `amazon-connect-pstn-transfer` 
 | **06-data-architecture** | Cresta blog, Trust Center |
 | **07-security-compliance-architecture** | Trust Center (certifications, subprocessors, security, RTO, risk profile) |
 | **Cresta-review** | Trust Center, Cresta blog, AWS ML blog, web search |
+| **14-cresta-sdk-developer-guide-analysis** | SDK guide (extracted text), architecture docs (for validation) |
 | **08–13** (requests, agenda, POC) | Point to architecture docs and Trust Center; feature/integration details from Cresta |
 
 ---
@@ -140,7 +141,7 @@ references.md (this file). Recommend referencing `amazon-connect-pstn-transfer` 
 ## 8. Gaps and Recommended Actions
 
 1. **Cresta Client SDK Developer Guide**  
-   - **Status:** PDF present; content not fully extracted.  
+   - **Status:** ✅ **Analyzed** – Text extracted via pdftotext; analysis in [14-cresta-sdk-developer-guide-analysis.md](14-cresta-sdk-developer-guide-analysis.md).  
    - **Action:** Extract or re-export as text; confirm with Cresta that it’s the current SDK guide; then reference specific sections in 02, 08, 10.
 
 2. **GitHub `amazon-connect-pstn-transfer`**  

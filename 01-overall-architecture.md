@@ -22,7 +22,7 @@ flowchart TB
             direction TB
             ConnectInstance["Amazon Connect Instance"]
             ContactFlow["Contact Flow<br/>IVR Logic"]
-            KVS["⏱️ 🔒 Kinesis Video Streams<br/>8kHz PCM | Dual-Track"]
+            KVS["⏱️ 🔒 Kinesis Video Streams<br/>PCM linear16 | Dual-Track"]
             CTR["Contact Trace Records"]
             AgentWorkspace["Agent Workspace / CCP"]
             
@@ -89,11 +89,12 @@ flowchart TB
             direction TB
             Fireworks["⏱️ Fireworks AI<br/>Model Hosting"]
             Cartesia["Cartesia<br/>Voice TTS"]
+            ElevenLabs["ElevenLabs<br/>Voice TTS"]
         end
 
         %% Main flow connections with labels
         Customer ==>|"Customer Call"| ConnectInstance
-        KVS ==>|"Audio Stream: 8kHz PCM"| Ingress_NGINX
+        KVS ==>|"Audio Stream: PCM linear16"| Ingress_NGINX
         Ingress_NGINX ==>|"HTTP/HTTPS"| GoWalter
         APIServer ==>|"Persist Transcripts"| Postgres
         APIServer ==>|"Transcript Events"| Orchestrator
@@ -152,6 +153,7 @@ flowchart TB
     style CrestaApp fill:#fcfcfd,stroke:#1f2937,stroke-width:2px
     style Fireworks fill:#fcfcfd,stroke:#d97706,stroke-width:2.5px
     style Cartesia fill:#fcfcfd,stroke:#1f2937,stroke-width:2px
+    style ElevenLabs fill:#fcfcfd,stroke:#1f2937,stroke-width:2px
     style KVS fill:#fcfcfd,stroke:#d97706,stroke-width:2.5px
 ```
 
@@ -179,7 +181,7 @@ flowchart TB
 
 | Component | Source | Risk Flags | Notes |
 |-----------|--------|------------|-------|
-| Kinesis Video Streams | Amazon Connect | ⏱️ 🔒 | Audio streamed at 8kHz, multi-track (customer/agent separate) |
+| Kinesis Video Streams | Amazon Connect | ⏱️ 🔒 | Audio streamed as PCM linear16 (16-bit PCM), multi-track (customer/agent separate) |
 | Customer Subdomains | Cresta Docs | 🔒 📋 | Data sovereignty - EU customers stay in EU regions |
 | gowalter | Cresta Docs | ⏱️ | WebSocket recovery mechanism for audio continuity |
 | ASR (Deepgram) | Cresta Docs | ⏱️ | 200-300ms latency target, partial transcripts every 0.5-1.5s |
@@ -188,12 +190,14 @@ flowchart TB
 
 ---
 
-## Compliance & Security Certifications (Confirmed)
+## Compliance & Security Certifications (Confirmed via [Cresta Trust Center](https://trust.cresta.com/))
 
 - ✅ SOC 2 Type II
 - ✅ ISO 27001/27701/42001
 - ✅ PCI-DSS (PII redaction)
 - ✅ HIPAA (BAA available)
+- ✅ CCPA / CPRA, GDPR, TISAX
+- ✅ RTO 8 hours; MFA
 
 ---
 
@@ -220,7 +224,7 @@ This document provides a high-level overview of the complete Cresta AI platform 
    - ML Services (ML Router, Model Shards, Ocean-1, LoRA adapters)
    - Data Layer (PostgreSQL, Redis Streams, Elasticsearch, ClickHouse, S3)
    - Agent Application (Cresta Agent App)
-4. **External AI Services**: Fireworks AI (Ocean-1 hosting), Cartesia (Voice TTS)
+4. **External AI Services**: Fireworks AI (Ocean-1 hosting), Cartesia & ElevenLabs (Voice TTS; [Trust Center](https://trust.cresta.com/) subprocessors)
 
 **Key Integration Points**:
 - **Audio Flow**: Connect → KVS → Cresta ingress → gowalter → ASR → apiserver

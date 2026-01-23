@@ -22,7 +22,7 @@ flowchart LR
             CF3[Invoke AWS Lambda]
             CF4[Transfer to Agent Queue]
             
-            KVS["⏱️ 🔒 Kinesis Video Streams<br/>8kHz PCM | Dual-Track"]
+            KVS["⏱️ 🔒 Kinesis Video Streams<br/>PCM linear16 | Dual-Track"]
             
             CF1 ==>|"Contact Flow Execution"| CF2 ==>|"Contact ID Metadata"| CF3 ==>|"Agent Assignment"| CF4
             CF1 ==>|"Initiates Stream"| KVS
@@ -53,7 +53,7 @@ flowchart LR
         %% Main Flow with descriptive labels (thick lines for visibility)
         CF3 ==>|"Contact Attributes: StreamARN, ContactId, StartFragmentNum"| Lambda
         IAM ==>|"GetMedia API Permission"| KVS
-        KVS ==>|"Audio Stream: WebSocket/HTTP/2, 8kHz PCM"| Endpoint
+        KVS ==>|"Audio Stream: WebSocket/HTTP/2, PCM linear16"| Endpoint
         CF4 ==>|"Agent Desktop Connection"| AgentApp
         AgentApp ==>|"Desktop Audio Capture"| GoWalter
     end
@@ -109,7 +109,7 @@ Amazon Connect streams audio directly to Cresta via Kinesis Video Streams.
 | Step | Component | Description |
 |------|-----------|-------------|
 | 1 | Contact Flow | "Start Media Streaming" block initiates KVS |
-| 2 | KVS | Audio captured at 8kHz, dual-track |
+| 2 | KVS | Audio captured as PCM linear16 (16-bit), dual-track |
 | 3 | Lambda Trigger | Passes StreamARN and ContactId to Cresta |
 | 4 | Cresta Endpoint | WebSocket connection to consume stream |
 
@@ -234,7 +234,7 @@ flowchart LR
 3. **Contact Attribute Mapping** - What custom attributes are required for Cresta?
 4. **Failover Behavior** - Does call continue if Cresta stream fails?
 5. **Multi-Region Setup** - How is traffic routed for multi-region Connect deployments?
-6. **Audio Format Verification** - AWS docs confirm PCM format but do not explicitly state 8kHz sample rate. This should be verified with Cresta or AWS support.
+6. **Audio Format** - ✅ **Confirmed**: PCM linear16 (16-bit PCM) encoding. Sample rate (8kHz) still requires verification.
 
 ---
 
@@ -251,8 +251,21 @@ This document describes the integration architecture between Amazon Connect and 
 **Critical Unknowns**:
 - Exact KVS consumption method (Lambda vs direct API)
 - Authentication mechanism (API key, OAuth, IAM)
-- Audio format sample rate (8kHz assumed but not explicitly confirmed in AWS docs)
+- Audio format: ✅ PCM linear16 (16-bit PCM) confirmed. Sample rate (8kHz) still requires verification.
 - Failover behavior when Cresta is unreachable
 - Agent App deployment method for Connect integration
 
 **Verification Status**: Architecture follows AWS best practices and documented patterns, but specific Cresta implementation details require direct confirmation from Cresta technical team.
+
+---
+
+## Developer Resources
+
+| Resource | Description | Notes |
+|----------|-------------|-------|
+| **Cresta Client SDK Developer Guide** | `Cresta Client SDK Developer Guide.pdf` (local) | Client/Agent App integration. **Age unknown** – PDF from Google Docs; confirm with Cresta that it’s current. See [references.md](references.md). |
+| **[Cresta GitHub](https://github.com/cresta)** | Cresta Intelligence, Inc. (verified cresta.com, cresta.ai) | Org-level validation. |
+| **[amazon-connect-pstn-transfer](https://github.com/cresta/amazon-connect-pstn-transfer)** | AWS resources for PSTN-only transfer with Amazon Connect | Relevant for Connect + Cresta PSTN transfer scenarios. |
+| **[CrestaVoice–Twilio Flex](https://github.com/cresta/CrestaVoice-TwilioFlexPluginIntegration-FollowTheAgent)** | Twilio Flex + Cresta Voice integration | Example CCaaS + Cresta integration pattern. |
+
+*All material references are centralized in [references.md](references.md).*

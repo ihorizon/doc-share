@@ -477,12 +477,13 @@ Cresta AI provides a unified conversational AI platform for contact centers, off
 
 ## 📚 References & Sources
 
+- [references.md](references.md) – Central index of all material references (Trust Center, blog, AWS, GitHub, SDK guide, etc.)
 - Cresta AI Platform Documentation
 - AWS Machine Learning Blog: "Evolution of Cresta's Machine Learning Architecture"
 - Cresta Blog: "Building and Deploying Production-Grade AI Agents"
 - Cresta Blog: "Cresta's Three Strategic Pillars of AI Agent Defense"
 - ISO/IEC 42001 Certification Announcement
-- Cresta Trust & Security Portal
+- [Cresta Trust Center](https://trust.cresta.com/) – compliance, subprocessors, security, RTO
 
 ---
 
@@ -499,7 +500,10 @@ Cresta AI provides a unified conversational AI platform for contact centers, off
 **✅ Confirmed via Public Sources:**
 - AWS migration and PyTorch/TorchServe infrastructure (AWS ML Blog)
 - Ocean-1 foundation model (Mistral 7B base, Fireworks hosting) - Cresta blog + web search
-- Compliance certifications (SOC 2, ISO 27001/27701/42001, PCI-DSS, HIPAA) - Cresta Trust Center
+- Compliance certifications (SOC 2, ISO 27001/27701/42001, PCI-DSS, HIPAA, TISAX, CCPA/CPRA, GDPR) - [Cresta Trust Center](https://trust.cresta.com/)
+- RTO 8 hours, MFA, Risk Profile (Data Access: Internal, Impact: Substantial) - [Cresta Trust Center](https://trust.cresta.com/)
+- Subprocessors: Fireworks.ai, Deepgram, OpenAI, Cartesia AI, ElevenLabs (TTS; Aug 2025), Google Cloud, Datadog, Segment, GUIDEcx - [Cresta Trust Center](https://trust.cresta.com/)
+- Security: IDS/IPS, network vulnerability scanning, disk encryption, EDR, MDM - [Cresta Trust Center](https://trust.cresta.com/)
 - Platform hosting on AWS EKS - Cresta blog
 - Customer isolation (separate databases) - Cresta blog
 - Core technology stack (PostgreSQL, Redis, Elasticsearch, ClickHouse, S3) - Cresta blog

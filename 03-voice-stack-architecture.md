@@ -356,7 +356,7 @@ flowchart TB
 ## Items Requiring Follow-up 🟡
 
 1. **ASR Provider Selection** - Is Deepgram the only ASR or are there alternatives (Amazon Transcribe)?
-2. **Audio Format** - Exact codec and sample rate from Amazon Connect KVS (8kHz PCM assumed but requires verification)
+2. **Audio Format** - ✅ **Confirmed**: PCM linear16 (16-bit PCM) encoding. Sample rate (8kHz) still requires verification.
 3. **Buffer Size Limits** - How much audio is buffered for recovery?
 4. **Multi-Language Support** - How is language detection handled for ASR?
 5. **ASR Failover** - What happens if Deepgram is unavailable?

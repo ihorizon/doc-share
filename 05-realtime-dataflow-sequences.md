@@ -40,7 +40,7 @@ sequenceDiagram
     rect rgb(254, 243, 199)
         Note right of C: 🎤 Audio Capture<br/>⏱️ Latency Critical
         C->>AC: Speech
-        AC->>KVS: Audio Stream (8kHz PCM)
+        AC->>KVS: Audio Stream (PCM linear16)
         KVS->>GW: WebSocket Stream
     end
 

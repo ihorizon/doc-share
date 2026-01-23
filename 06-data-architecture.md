@@ -293,6 +293,17 @@ flowchart TB
 
 ---
 
+## Recovery & Resilience
+
+| Attribute | Value | Source |
+|-----------|-------|--------|
+| **Recovery Time Objective (RTO)** | 8 hours | [Cresta Trust Center](https://trust.cresta.com/) |
+| **Data Backups** | Confirmed | [Cresta Trust Center](https://trust.cresta.com/) |
+
+*RPO (Recovery Point Objective) not explicitly stated; confirm with Cresta.*
+
+---
+
 ## Risk Summary
 
 ### ⚙️ Operational Risks
@@ -311,7 +322,7 @@ flowchart TB
 2. **APAC Region** - Is AP-Southeast-1 available for data residency?
 3. **Archive Strategy** - Is S3 Glacier used for long-term audio storage?
 4. **Deletion Process** - What is the process for customer data deletion requests?
-5. **Backup RPO/RTO** - What are the backup and recovery objectives?
+5. **Backup RPO** - Recovery Point Objective (RTO 8h confirmed via [Trust Center](https://trust.cresta.com/); RPO not stated).
 
 ---
 
@@ -334,4 +345,6 @@ This document describes the data storage architecture, customer data isolation, 
 - **Retention**: Customer-configurable (defaults require verification)
 - **Lifecycle**: Active storage → Archive (S3 Glacier assumed, requires verification) → Secure deletion
 
-**Verification Status**: Data isolation approach consistent with Cresta blog. Data retention defaults, APAC region availability, archive strategy, and backup RPO/RTO require Cresta confirmation.
+**Recovery**: RTO 8 hours and data backups confirmed via [Cresta Trust Center](https://trust.cresta.com/). RPO not explicitly stated.
+
+**Verification Status**: Data isolation approach consistent with Cresta blog. RTO 8h confirmed via Trust Center. Data retention defaults, APAC region availability, archive strategy, and RPO require Cresta confirmation.

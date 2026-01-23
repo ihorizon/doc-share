@@ -113,4 +113,6 @@ This request supports the technical assessment and POC planning described in:
 
 - [00-summary-and-followups.md](00-summary-and-followups.md) – Architecture summary and follow-ups
 - [Cresta-review.md](Cresta-review.md) – Executive assessment
+- [references.md](references.md) – Central index of all material references
+- **Cresta Client SDK Developer Guide** – We have `Cresta Client SDK Developer Guide.pdf` locally (age unknown). Request latest SDK/API docs if different; confirm currency with Cresta.
 - Gap Analysis: Cresta AI Technical Assessment for POC Planning

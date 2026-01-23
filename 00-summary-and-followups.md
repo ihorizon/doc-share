@@ -17,6 +17,7 @@
 | 11 | [Business Use Cases](11-business-use-cases.md) | Contact center business use cases |
 | 12 | [POC Test Scenarios](12-poc-test-scenarios.md) | Technical test scenarios, success criteria, validation |
 | 13 | [Proof of Concept Plan](13-proof-of-concept-plan.md) | Business-focused POC plan aligned with use cases |
+| — | [References](references.md) | Central index of all material references and what was referenced |
 
 ---
 
@@ -24,7 +25,7 @@
 
 **Important**: This documentation is based on publicly available information, Cresta blog posts, AWS documentation, and logical inference. The following items require direct confirmation from Cresta:
 
-1. **Audio Format Specification**: AWS documentation confirms Amazon Connect streams audio in PCM format to KVS, but does not explicitly state the sample rate (8kHz). This should be verified with Cresta or AWS support.
+1. **Audio Format**: ✅ **Confirmed**: PCM linear16 (16-bit PCM) encoding. Sample rate (8kHz) still requires verification with Cresta or AWS support.
 
 2. **KVS Integration Method**: The exact mechanism by which Cresta consumes KVS streams (Lambda consumer vs direct GetMedia API) is not publicly documented and requires Cresta confirmation.
 
@@ -61,17 +62,36 @@
 | **Infrastructure Migration** | Consolidated from multi-cloud to AWS | AWS ML Blog | ✅ Confirmed via web search |
 | **PII Redaction** | Audio beeps + text masking | Cresta blog |
 | **Redaction Verification** | Temporal workflows | Cresta blog |
-| **Certifications** | SOC 2 Type II, ISO 27001/27701/42001, PCI-DSS, HIPAA | Cresta Trust Center |
+| **Certifications** | SOC 2 Type II, ISO 27001/27701/42001, PCI-DSS, HIPAA, CCPA/CPRA, GDPR, TISAX | [Cresta Trust Center](https://trust.cresta.com/) |
+| **Recovery Time Objective (RTO)** | 8 hours | [Cresta Trust Center](https://trust.cresta.com/) |
+| **Risk Profile** | Data Access Level: Internal; Impact Level: Substantial | [Cresta Trust Center](https://trust.cresta.com/) |
+| **MFA** | Multi-factor authentication | [Cresta Trust Center](https://trust.cresta.com/) |
+| **SSO Provider (Client-side)** | PingFederate | Client implementation confirmed |
 
 ### From Amazon Connect Documentation (High Confidence)
 
 | Component | Detail | Source | Verification Status |
 |-----------|--------|--------|---------------------|
 | **Audio Streaming** | Kinesis Video Streams | AWS Docs | ✅ Confirmed |
-| **Audio Format** | Raw PCM (exact sample rate not explicitly documented) | AWS Docs | 🟡 **Note**: AWS docs confirm PCM format but do not explicitly state 8kHz - requires verification |
+| **Audio Format** | PCM linear16 (16-bit PCM) | Confirmed | ✅ **Confirmed**: PCM linear16 encoding. Sample rate (8kHz) still requires verification |
 | **Track Separation** | AUDIO_TO_CUSTOMER, AUDIO_FROM_CUSTOMER | AWS Docs | ✅ Confirmed |
 | **Integration Method** | Contact Flow + Lambda trigger | AWS Docs | ✅ Confirmed |
 | **Contact Attributes** | streamARN, startFragmentNum, ContactId | AWS Docs | ✅ Confirmed |
+
+### Subprocessors (from [Cresta Trust Center](https://trust.cresta.com/))
+
+| Subprocessor | Purpose | Notes |
+|--------------|---------|-------|
+| **Fireworks.ai** | LLM model inference (Ocean-1) | Confirms architecture |
+| **Deepgram** | ASR (speech-to-text) | Confirms voice stack |
+| **OpenAI** | LLM services | Additional model provider |
+| **Cartesia AI** | TTS (text-to-speech) | Voice synthesis |
+| **ElevenLabs** | TTS (text-to-speech) | Added Aug 2025 |
+| **Google Cloud** | Infrastructure | |
+| **Datadog** | Monitoring | |
+| **Segment** | Analytics | |
+
+*Cresta has discontinued Mixpanel (Aug 2025), Linear, Atlassian, FullStory, MosaicML, Optimizely. Added GUIDEcx for onboarding.*
 
 ---
 
@@ -106,7 +126,7 @@
 | 13 | **SSO Providers** - Which SSO platforms are supported? | 06 | Admin setup |
 | 14 | **Data Retention Defaults** - Default retention periods | 06 | Compliance |
 | 15 | **APAC Region Availability** - Data residency in AP-Southeast-1 | 06 | Regional expansion |
-| 16 | **Backup RPO/RTO** - Recovery objectives | 06 | DR planning |
+| 16 | **Backup RPO** - Recovery Point Objective (RTO 8h confirmed via Trust Center; RPO not stated) | 06 | DR planning |
 
 ---
 
@@ -251,19 +271,22 @@
 - Customer data isolation (separate databases, S3 paths, ES indices per customer)
 - Regional data residency (US, EU confirmed; APAC requires verification)
 - Data retention and lifecycle management
+- **RTO 8 hours** and data backups confirmed via [Cresta Trust Center](https://trust.cresta.com/)
 
-**Verification Status**: Data isolation approach consistent with Cresta blog. Data retention defaults, APAC region availability, archive strategy, and backup RPO/RTO require Cresta confirmation.
+**Verification Status**: Data isolation consistent with Cresta blog. RTO 8h confirmed via Trust Center. Data retention defaults, APAC availability, archive strategy, and RPO require Cresta confirmation.
 
 ### 07 - Security & Compliance Architecture
-**Summary**: Security controls, compliance framework, and PII redaction pipeline for the Cresta platform.
+**Summary**: Security controls, compliance framework, PII redaction pipeline, and subprocessors for the Cresta platform. Key details from [Cresta Trust Center](https://trust.cresta.com/).
 
 **Key Security & Compliance Elements**:
-- Security controls (WAF, TLS, encryption at rest/transit, RBAC, IAM)
-- PII redaction (NER, regex, ML detection, audio beeps, text masking with Temporal workflow verification)
-- Compliance certifications (SOC 2, ISO 27001/27701/42001, PCI-DSS, HIPAA)
-- Compliance areas (Privacy/GDPR, Financial/PCI-DSS, Healthcare/HIPAA, AI Governance)
+- Security controls: WAF, TLS, encryption at rest/transit, RBAC, IAM, **MFA** ✅
+- Network: IDS/IPS, network vulnerability scanning; Endpoint: disk encryption, EDR, MDM
+- **Risk Profile**: Data Access Level Internal, Impact Level Substantial, **RTO 8 hours**
+- **Subprocessors**: Fireworks.ai, Deepgram, OpenAI, Cartesia AI, **ElevenLabs** (TTS; Aug 2025), Google Cloud, Datadog, Segment, GUIDEcx
+- PII redaction (NER, regex, ML detection, audio beeps, text masking; Temporal verification)
+- Compliance: SOC 2, ISO 27001/27701/42001, PCI-DSS, HIPAA, **TISAX, CCPA/CPRA, GDPR**
 
-**Verification Status**: Compliance certifications confirmed via Cresta Trust Center. Security controls align with AWS best practices. SSO providers, SIEM integration, and MFA implementation require Cresta confirmation.
+**Verification Status**: Certifications, MFA, RTO, subprocessors, and expanded security confirmed via Trust Center. **SSO**: PingFederate confirmed for client-side implementation. Other SSO providers and SIEM integration require Cresta confirmation.
 
 ---
 

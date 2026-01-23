@@ -66,6 +66,7 @@
 
 - Ensure we have (or will have) Connect instance + test queue for demo.
 - Prepare optional screen-share of our Connect setup if useful.
+- Review [references.md](references.md), `Cresta Client SDK Developer Guide.pdf` (local; confirm currency with Cresta), and [Cresta GitHub amazon-connect-pstn-transfer](https://github.com/cresta/amazon-connect-pstn-transfer) for Connect-related resources.
 
 ---
 
@@ -155,3 +156,4 @@
 - [11-business-use-cases.md](11-business-use-cases.md) – Business use cases
 - [12-poc-test-scenarios.md](12-poc-test-scenarios.md) – Technical test scenarios
 - [13-proof-of-concept-plan.md](13-proof-of-concept-plan.md) – Business-focused POC plan
+- [references.md](references.md) – Central index of all material references (Trust Center, blog, AWS, GitHub, SDK guide, etc.)

@@ -104,6 +104,7 @@
 - **Authentication and security** – How to authenticate and secure the integration.
 - **Testing and validation** – Procedures and checklist to validate the integration.
 - **Troubleshooting guide** – Common issues and resolutions for the Connect–Cresta integration.
+- **Client SDK / Developer guide** – If applicable, SDK or API docs for Agent App / client integration (we have `Cresta Client SDK Developer Guide.pdf` locally; age unknown – confirm with Cresta).
 
 **Format**: PDF, Confluence, or equivalent documentation links are acceptable.
 
@@ -114,4 +115,7 @@
 - [02-amazon-connect-integration.md](02-amazon-connect-integration.md) – Current integration architecture and diagrams  
 - [00-summary-and-followups.md](00-summary-and-followups.md) – Follow-up items (e.g. KVS consumer, auth, failover)  
 - [05-realtime-dataflow-sequences.md](05-realtime-dataflow-sequences.md) – End-to-end real-time flows  
+- [references.md](references.md) – Central index of all material references  
+- **Cresta Client SDK Developer Guide** – `Cresta Client SDK Developer Guide.pdf` (local; age unknown; confirm currency with Cresta)  
+- [Cresta GitHub](https://github.com/cresta) – [amazon-connect-pstn-transfer](https://github.com/cresta/amazon-connect-pstn-transfer) (PSTN transfer with Connect), [Twilio Flex integration](https://github.com/cresta/CrestaVoice-TwilioFlexPluginIntegration-FollowTheAgent) (integration pattern example)  
 - Gap Analysis: Cresta AI Technical Assessment for POC Planning

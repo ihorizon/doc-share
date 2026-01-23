@@ -297,6 +297,16 @@ flowchart LR
 | **Private Subnets** | Private subnets for compute | Limit public exposure |
 | **Security Groups** | Stateful firewall rules | Control traffic between resources |
 | **NACLs** | Network ACLs | Additional network layer security |
+| **IDS/IPS** | Intrusion detection / prevention | [Cresta Trust Center](https://trust.cresta.com/) |
+| **Network Vulnerability Scanning** | Regular network assessments | [Cresta Trust Center](https://trust.cresta.com/) |
+
+### Endpoint Security
+
+| Control | Implementation | Purpose | Source |
+|--------|----------------|---------|--------|
+| **Disk Encryption** | Full-disk encryption on endpoints | Protect data at rest | [Cresta Trust Center](https://trust.cresta.com/) |
+| **Endpoint Detection & Response (EDR)** | EDR solutions deployed | Detect and respond to threats | [Cresta Trust Center](https://trust.cresta.com/) |
+| **Mobile Device Management (MDM)** | MDM for mobile endpoints | Manage and secure mobile devices | [Cresta Trust Center](https://trust.cresta.com/) |
 
 ### Identity & Access Management
 
@@ -304,8 +314,8 @@ flowchart LR
 |--------|----------------|---------|
 | **IAM Roles** | AWS IAM roles for services | Least privilege access for AWS resources |
 | **RBAC** | Cresta role-based access control | User permissions within Cresta platform |
-| **SSO** | Single Sign-On integration | 🟡 Providers require verification |
-| **MFA** | Multi-factor authentication | 🟡 Implementation requires verification |
+| **SSO** | Single Sign-On integration | ✅ **Client-side**: PingFederate (confirmed for this implementation) |
+| **MFA** | Multi-factor authentication | ✅ [Cresta Trust Center](https://trust.cresta.com/) |
 
 ### Data Protection
 
@@ -346,9 +356,39 @@ flowchart LR
 
 ---
 
+## Risk Profile ([Cresta Trust Center](https://trust.cresta.com/))
+
+| Attribute | Value | Notes |
+|-----------|-------|-------|
+| **Data Access Level** | Internal | |
+| **Impact Level** | Substantial | |
+| **Recovery Time Objective (RTO)** | 8 hours | Confirmed |
+
+---
+
+## Subprocessors ([Cresta Trust Center](https://trust.cresta.com/))
+
+Cresta uses the following subprocessors (as of Trust Center disclosure). See [trust.cresta.com](https://trust.cresta.com/) for current list and subprocessor notifications.
+
+| Subprocessor | Purpose |
+|--------------|---------|
+| **Fireworks.ai** | LLM model inference (Ocean-1) |
+| **Deepgram** | ASR (speech-to-text) |
+| **OpenAI** | LLM services |
+| **Cartesia AI** | TTS (text-to-speech) |
+| **ElevenLabs** | TTS (text-to-speech); added Aug 2025 |
+| **Google Cloud** | Infrastructure |
+| **Datadog** | Monitoring |
+| **Segment** | Analytics |
+| **GUIDEcx** | Onboarding software |
+
+*Discontinued (as of Trust Center updates): Mixpanel (Aug 2025), Linear, Atlassian, FullStory, MosaicML, Optimizely.*
+
+---
+
 ## Compliance Framework
 
-### Certifications (Confirmed via Cresta Trust Center)
+### Certifications (Confirmed via [Cresta Trust Center](https://trust.cresta.com/))
 
 | Certification | Scope | Status |
 |---------------|-------|--------|
@@ -358,6 +398,9 @@ flowchart LR
 | **ISO 42001** | AI management systems | ✅ Confirmed |
 | **PCI-DSS** | Payment card industry data security | ✅ Confirmed |
 | **HIPAA** | Healthcare data protection (BAA available) | ✅ Confirmed |
+| **TISAX** | Automotive industry security | ✅ [Trust Center](https://trust.cresta.com/) |
+| **CCPA / CPRA** | California privacy | ✅ [Trust Center](https://trust.cresta.com/) |
+| **GDPR** | EU privacy | ✅ [Trust Center](https://trust.cresta.com/) |
 
 ### Compliance Areas
 
@@ -403,30 +446,34 @@ flowchart LR
 
 ## Items Requiring Follow-up 🟡
 
-1. **SSO Providers** - Which SSO providers are supported (Okta, Azure AD, etc.)?
+1. **SSO Providers** - ✅ **Client-side**: PingFederate confirmed for this implementation. Verify which other SSO providers Cresta supports (Okta, Azure AD, etc.) if needed.
 2. **SIEM Integration** - What SIEM platforms can ingest Cresta logs?
-3. **MFA Implementation** - How is multi-factor authentication implemented?
-4. **PII Redaction Accuracy** - What is the accuracy rate for PII detection and redaction?
+3. **PII Redaction Accuracy** - What is the accuracy rate for PII detection and redaction?
 
 ---
 
 ## Summary
 
-This document describes the security controls, compliance framework, and PII redaction pipeline for the Cresta platform.
+This document describes the security controls, compliance framework, and PII redaction pipeline for the Cresta platform. Key details are confirmed via the [Cresta Trust Center](https://trust.cresta.com/).
 
 **Security Controls**:
 - **Perimeter**: Wallarm WAF, DDoS protection, TLS 1.2+ termination
-- **Network**: AWS VPC, private subnets, security groups, NACLs
-- **Identity**: AWS IAM roles, Cresta RBAC, SSO integration (providers require verification), MFA (requires verification)
+- **Network**: AWS VPC, private subnets, security groups, NACLs, IDS/IPS, network vulnerability scanning
+- **Endpoint**: Disk encryption, EDR, mobile device management (MDM)
+- **Identity**: AWS IAM roles, Cresta RBAC, **SSO integration (PingFederate confirmed for client-side)**, MFA ✅
 - **Data Protection**: AWS KMS encryption keys, AES-256 at rest, TLS in transit, PII redaction
 
-**PII Redaction Pipeline**:
-- **Detection**: Named Entity Recognition (NER), regex patterns (SSN, credit card, phone), ML-based detection
-- **Redaction**: Text masking (replace with tags), audio beeping (mute segments)
-- **Verification**: Temporal workflow re-scans for missed PII, retry on failure, manual review queue
+**Risk Profile** (Trust Center): Data Access Level Internal, Impact Level Substantial, **RTO 8 hours**.
 
-**Compliance Framework** (Confirmed via Cresta Trust Center):
-- **Certifications**: SOC 2 Type II, ISO 27001 (Information Security), ISO 27701 (Privacy), ISO 42001 (AI Management), PCI-DSS, HIPAA (BAA available)
+**Subprocessors** (Trust Center): Fireworks.ai, Deepgram, OpenAI, Cartesia AI, ElevenLabs (TTS; Aug 2025), Google Cloud, Datadog, Segment, GUIDEcx. Mixpanel, Linear, Atlassian, FullStory, MosaicML, Optimizely discontinued.
+
+**PII Redaction Pipeline**:
+- **Detection**: NER, regex (SSN, credit card, phone), ML-based detection
+- **Redaction**: Text masking, audio beeping
+- **Verification**: Temporal workflow re-scan, retry, manual review queue
+
+**Compliance Framework** ([Cresta Trust Center](https://trust.cresta.com/)):
+- **Certifications**: SOC 2 Type II, ISO 27001/27701/42001, PCI-DSS, HIPAA, TISAX, CCPA/CPRA, GDPR
 - **Compliance Areas**: Privacy (GDPR, CCPA), Financial (PCI-DSS), Healthcare (HIPAA), AI Governance (ISO 42001)
 
-**Verification Status**: Compliance certifications confirmed via Cresta Trust Center. Security controls align with AWS best practices. SSO providers, SIEM integration, and MFA implementation require Cresta confirmation.
+**Verification Status**: Compliance certifications, MFA, RTO, subprocessors, and expanded security controls confirmed via Cresta Trust Center. **SSO**: PingFederate confirmed for client-side implementation. Other SSO providers and SIEM integration require Cresta confirmation.

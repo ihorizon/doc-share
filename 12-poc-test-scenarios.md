@@ -2,7 +2,7 @@
 
 **Purpose**: Define test scenarios, success criteria, and validation approach for the Cresta AI proof of concept with Amazon Connect.
 
-**Context**: Technical assessment of Cresta AI and its Amazon Connect integration. Use these scenarios to validate integration, features, and performance during POC. Update as feature documentation and integration details are received (see [07-cresta-feature-documentation-request](07-cresta-feature-documentation-request.md), [08-cresta-amazon-connect-integration-request](08-cresta-amazon-connect-integration-request.md)).
+**Context**: Technical assessment of Cresta AI and its Amazon Connect integration. Use these scenarios to validate integration, features, and performance during POC. Update as feature documentation and integration details are received (see [08-cresta-feature-documentation-request](08-cresta-feature-documentation-request.md), [09-cresta-amazon-connect-integration-request](09-cresta-amazon-connect-integration-request.md)).
 
 ---
 
@@ -93,7 +93,7 @@
 
 ## 3. Feature Test Scenarios
 
-**Goal**: Validate Cresta capabilities in scope for POC. Adjust based on [07-cresta-feature-documentation-request](07-cresta-feature-documentation-request.md) and actual features.
+**Goal**: Validate Cresta capabilities in scope for POC. Adjust based on [08-cresta-feature-documentation-request](08-cresta-feature-documentation-request.md) and actual features.
 
 ### 3.1 Agent Assist (Real-Time Guidance)
 
@@ -204,6 +204,7 @@ Use this matrix to track which scenarios apply to which POC features. Update “
 - [05-realtime-dataflow-sequences.md](05-realtime-dataflow-sequences.md) – Real-time flows, latency budget  
 - [02-amazon-connect-integration.md](02-amazon-connect-integration.md) – Integration architecture  
 - [Cresta-review.md](Cresta-review.md) – Assessment, latency targets, features  
-- [07-cresta-feature-documentation-request.md](07-cresta-feature-documentation-request.md) – Feature request  
-- [08-cresta-amazon-connect-integration-request.md](08-cresta-amazon-connect-integration-request.md) – Integration request  
-- [09-cresta-technical-sessions-agenda.md](09-cresta-technical-sessions-agenda.md) – Technical sessions, incl. POC planning
+- [08-cresta-feature-documentation-request.md](08-cresta-feature-documentation-request.md) – Feature request  
+- [09-cresta-amazon-connect-integration-request.md](09-cresta-amazon-connect-integration-request.md) – Integration request  
+- [10-cresta-technical-sessions-agenda.md](10-cresta-technical-sessions-agenda.md) – Technical sessions, incl. POC planning
+- [13-proof-of-concept-plan.md](13-proof-of-concept-plan.md) – Business-focused POC plan aligned with use cases

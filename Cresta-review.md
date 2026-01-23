@@ -517,8 +517,8 @@ Cresta AI provides a unified conversational AI platform for contact centers, off
 
 **Next Steps:**
 1. Request access to internal documentation
-2. Schedule technical deep-dive sessions (see [09-cresta-technical-sessions-agenda.md](09-cresta-technical-sessions-agenda.md))
-3. Send feature documentation and integration guide requests (see [07-cresta-feature-documentation-request.md](07-cresta-feature-documentation-request.md), [08-cresta-amazon-connect-integration-request.md](08-cresta-amazon-connect-integration-request.md))
+2. Schedule technical deep-dive sessions (see [10-cresta-technical-sessions-agenda.md](10-cresta-technical-sessions-agenda.md))
+3. Send feature documentation and integration guide requests (see [08-cresta-feature-documentation-request.md](08-cresta-feature-documentation-request.md), [09-cresta-amazon-connect-integration-request.md](09-cresta-amazon-connect-integration-request.md))
 4. Conduct hands-on evaluation if possible
 5. Review customer case studies and testimonials
 

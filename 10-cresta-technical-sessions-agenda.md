@@ -94,7 +94,7 @@
 
 ### Prep
 
-- Review [07-cresta-feature-documentation-request.md](07-cresta-feature-documentation-request.md).
+- Review [08-cresta-feature-documentation-request.md](08-cresta-feature-documentation-request.md).
 - Draft initial list of POC use cases (e.g. support, sales, compliance).
 
 ---
@@ -111,7 +111,7 @@
 |---|--------|-----------|
 | 4.1 | **POC scope** | Agents, queues, call volume, duration. In-scope vs out-of-scope. |
 | 4.2 | **Success criteria** | Metrics (e.g. latency, containment, resolution, adoption). Qualitative goals. |
-| 4.3 | **Test scenarios** | Specific scenarios to run (e.g. knowledge assist, compliance, multi-turn). See [10-poc-test-scenarios.md](10-poc-test-scenarios.md). |
+| 4.3 | **Test scenarios** | Specific scenarios to run (e.g. knowledge assist, compliance, multi-turn). See [12-poc-test-scenarios.md](12-poc-test-scenarios.md) and [13-proof-of-concept-plan.md](13-proof-of-concept-plan.md). |
 | 4.4 | **Timeline** | Setup, config, pilot, evaluation. Milestones and dependencies. |
 | 4.5 | **Support** | Who we contact during POC. Response expectations. |
 | 4.6 | **Next steps** | Documentation access, environment provisioning, kickoff. |
@@ -124,7 +124,7 @@
 
 ### Prep
 
-- Review [10-poc-test-scenarios.md](10-poc-test-scenarios.md) (created per plan).
+- Review [12-poc-test-scenarios.md](12-poc-test-scenarios.md) and [13-proof-of-concept-plan.md](13-proof-of-concept-plan.md).
 - Draft success criteria and POC timeline.
 - Confirm attendees and roles on our side.
 
@@ -139,8 +139,8 @@
 - [ ] Cresta contacts (SE, CSM) confirmed  
 - [ ] Our attendees and roles confirmed  
 - [ ] Prep completed for each session  
-- [ ] Request sent: [07-cresta-feature-documentation-request](07-cresta-feature-documentation-request.md)  
-- [ ] Request sent: [08-cresta-amazon-connect-integration-request](08-cresta-amazon-connect-integration-request.md)  
+- [ ] Request sent: [08-cresta-feature-documentation-request](08-cresta-feature-documentation-request.md)  
+- [ ] Request sent: [09-cresta-amazon-connect-integration-request](09-cresta-amazon-connect-integration-request.md)  
 
 ---
 
@@ -150,6 +150,8 @@
 - [01-overall-architecture.md](01-overall-architecture.md) – Overall architecture  
 - [02-amazon-connect-integration.md](02-amazon-connect-integration.md) – Connect integration  
 - [05-realtime-dataflow-sequences.md](05-realtime-dataflow-sequences.md) – Real-time flows  
-- [07-cresta-feature-documentation-request.md](07-cresta-feature-documentation-request.md) – Feature request  
-- [08-cresta-amazon-connect-integration-request.md](08-cresta-amazon-connect-integration-request.md) – Integration request  
-- [10-poc-test-scenarios.md](10-poc-test-scenarios.md) – POC test scenarios (to be created)
+- [08-cresta-feature-documentation-request.md](08-cresta-feature-documentation-request.md) – Feature request  
+- [09-cresta-amazon-connect-integration-request.md](09-cresta-amazon-connect-integration-request.md) – Integration request  
+- [11-business-use-cases.md](11-business-use-cases.md) – Business use cases
+- [12-poc-test-scenarios.md](12-poc-test-scenarios.md) – Technical test scenarios
+- [13-proof-of-concept-plan.md](13-proof-of-concept-plan.md) – Business-focused POC plan

@@ -9,11 +9,14 @@
 | 03 | [Voice Stack Architecture](03-voice-stack-architecture.md) | Audio processing and ASR pipeline |
 | 04 | [ML Services Architecture](04-ml-services-architecture.md) | Model serving and inference |
 | 05 | [Real-Time Data Flows](05-realtime-dataflow-sequences.md) | Sequence diagrams for key flows |
-| 06 | [Data & Security](06-data-security-architecture.md) | Storage, compliance, security |
-| 07 | [Cresta Feature Documentation Request](07-cresta-feature-documentation-request.md) | Request for feature catalog and capabilities |
-| 08 | [Cresta Amazon Connect Integration Request](08-cresta-amazon-connect-integration-request.md) | Request for integration guide and setup |
-| 09 | [Cresta Technical Sessions Agenda](09-cresta-technical-sessions-agenda.md) | Agenda and prep for technical sessions |
-| 10 | [POC Test Scenarios](10-poc-test-scenarios.md) | POC test scenarios, success criteria, validation |
+| 06 | [Data Architecture](06-data-architecture.md) | Data storage, retention, lifecycle |
+| 07 | [Security & Compliance](07-security-compliance-architecture.md) | Security controls, compliance framework, PII redaction |
+| 08 | [Cresta Feature Documentation Request](08-cresta-feature-documentation-request.md) | Request for feature catalog and capabilities |
+| 09 | [Cresta Amazon Connect Integration Request](09-cresta-amazon-connect-integration-request.md) | Request for integration guide and setup |
+| 10 | [Cresta Technical Sessions Agenda](10-cresta-technical-sessions-agenda.md) | Agenda and prep for technical sessions |
+| 11 | [Business Use Cases](11-business-use-cases.md) | Contact center business use cases |
+| 12 | [POC Test Scenarios](12-poc-test-scenarios.md) | Technical test scenarios, success criteria, validation |
+| 13 | [Proof of Concept Plan](13-proof-of-concept-plan.md) | Business-focused POC plan aligned with use cases |
 
 ---
 
@@ -166,10 +169,11 @@
 
 4. **POC Planning**
    - Define pilot scope (agent count, call volume)
-   - Identify test scenarios ([10-poc-test-scenarios.md](10-poc-test-scenarios.md))
+   - Identify test scenarios ([12-poc-test-scenarios.md](12-poc-test-scenarios.md))
    - Establish success metrics
-   - Send [Feature Documentation Request](07-cresta-feature-documentation-request.md) and [Integration Guide Request](08-cresta-amazon-connect-integration-request.md) to Cresta
-   - Schedule technical sessions per [09-cresta-technical-sessions-agenda.md](09-cresta-technical-sessions-agenda.md)
+   - Review business use cases ([11-business-use-cases.md](11-business-use-cases.md)) and POC plan ([13-proof-of-concept-plan.md](13-proof-of-concept-plan.md))
+   - Send [Feature Documentation Request](08-cresta-feature-documentation-request.md) and [Integration Guide Request](09-cresta-amazon-connect-integration-request.md) to Cresta
+   - Schedule technical sessions per [10-cresta-technical-sessions-agenda.md](10-cresta-technical-sessions-agenda.md)
 
 ---
 
@@ -237,17 +241,29 @@
 
 **Verification Status**: Flow sequences are logically structured. Latency targets are documented but should be verified against Cresta SLAs. Translation flow includes components (TTS, audio playback) that require verification.
 
-### 06 - Data & Security Architecture
-**Summary**: Data storage architecture, security controls, PII redaction pipeline, regional data residency, compliance framework, and data retention policies.
+### 06 - Data Architecture
+**Summary**: Data storage architecture, customer data isolation, regional data residency, and data lifecycle management for the Cresta platform.
+
+**Key Data Components**:
+- Operational stores (PostgreSQL, Redis)
+- Analytics stores (Elasticsearch, ClickHouse)
+- Object storage (S3 for audio files and model artifacts)
+- Customer data isolation (separate databases, S3 paths, ES indices per customer)
+- Regional data residency (US, EU confirmed; APAC requires verification)
+- Data retention and lifecycle management
+
+**Verification Status**: Data isolation approach consistent with Cresta blog. Data retention defaults, APAC region availability, archive strategy, and backup RPO/RTO require Cresta confirmation.
+
+### 07 - Security & Compliance Architecture
+**Summary**: Security controls, compliance framework, and PII redaction pipeline for the Cresta platform.
 
 **Key Security & Compliance Elements**:
-- Customer data isolation (separate databases, S3 paths, ES indices)
-- Security controls (WAF, TLS, encryption at rest/transit, RBAC)
-- PII redaction (NER, regex, ML detection, audio beeps, text masking)
+- Security controls (WAF, TLS, encryption at rest/transit, RBAC, IAM)
+- PII redaction (NER, regex, ML detection, audio beeps, text masking with Temporal workflow verification)
 - Compliance certifications (SOC 2, ISO 27001/27701/42001, PCI-DSS, HIPAA)
-- Regional data residency (US, EU confirmed; APAC requires verification)
+- Compliance areas (Privacy/GDPR, Financial/PCI-DSS, Healthcare/HIPAA, AI Governance)
 
-**Verification Status**: Compliance certifications are confirmed via Cresta Trust Center. Data isolation approach is consistent with Cresta blog. SSO providers, SIEM integration, APAC region availability, and data retention defaults require Cresta confirmation.
+**Verification Status**: Compliance certifications confirmed via Cresta Trust Center. Security controls align with AWS best practices. SSO providers, SIEM integration, and MFA implementation require Cresta confirmation.
 
 ---
 

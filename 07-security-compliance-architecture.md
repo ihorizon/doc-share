@@ -1,4 +1,4 @@
-# Data Storage & Security Architecture
+# Security & Compliance Architecture
 
 ## Legend
 - 🔒 **Security Risk** - Data protection, authentication, encryption concerns
@@ -6,92 +6,6 @@
 - 📋 **Compliance Risk** - GDPR, PCI-DSS, HIPAA considerations
 - ⚙️ **Operational Risk** - Availability, scaling, monitoring concerns
 - 🟡 **Yellow/Orange** - Requires follow-up/verification
-
----
-
-## Data Architecture Overview
-
-```mermaid
-flowchart TB
-    subgraph Outer[" "]
-        subgraph DataSources["Data Sources"]
-            direction LR
-            Audio["Audio Streams"]
-            Transcripts["Transcripts"]
-            Annotations["ML Annotations"]
-            AgentActions["Agent Actions"]
-            Config["Configuration"]
-        end
-
-        subgraph DataLayer["Data Storage Layer"]
-            direction TB
-            subgraph Operational["Operational Stores"]
-                direction LR
-                Postgres[(📋 🔒 PostgreSQL<br/>Conversations, Transcripts,<br/>Users, Policies)]
-                Redis[(Redis<br/>Event Streams,<br/>Session Cache, Policy Cache)]
-            end
-
-            subgraph Analytics["Analytics Stores"]
-                direction LR
-                ES[(Elasticsearch<br/>Conversation Search,<br/>Full-text Index)]
-                ClickHouse[(ClickHouse<br/>Analytics, Metrics,<br/>Aggregations)]
-            end
-
-            subgraph ObjectStorage["Object Storage"]
-                direction LR
-                S3Audio[(🔒 📋 S3<br/>Audio Files<br/>Encrypted)]
-                S3Models[(S3<br/>Model Artifacts)]
-            end
-        end
-
-        subgraph DataIsolation["Customer Data Isolation"]
-            direction LR
-            TenantDB["🔒 Separate Databases<br/>per Customer"]
-            TenantBucket["🔒 Separate S3 Paths<br/>per Customer"]
-            TenantIndex["🔒 Separate ES Indices<br/>per Customer"]
-        end
-
-        Audio ==>|"Store"| S3Audio
-        Transcripts ==>|"Persist"| Postgres
-        Transcripts ==>|"Index"| ES
-        Annotations ==>|"Store"| Postgres
-        Annotations ==>|"Analytics"| ClickHouse
-        AgentActions ==>|"Analytics"| ClickHouse
-        Config ==>|"Store"| Postgres
-        Config ==>|"Cache"| Redis
-
-        Postgres ==>|"Isolated by"| TenantDB
-        S3Audio ==>|"Isolated by"| TenantBucket
-        ES ==>|"Isolated by"| TenantIndex
-    end
-    
-    %% Outer container with white background
-    style Outer fill:#ffffff,stroke:#d1d5db,stroke-width:2px
-    
-    %% Transparent group backgrounds with light gray borders
-    style DataSources fill:none,stroke:#9ca3af,stroke-width:1.5px
-    style DataLayer fill:none,stroke:#9ca3af,stroke-width:1.5px
-    style DataIsolation fill:none,stroke:#9ca3af,stroke-width:1.5px
-    style Operational fill:none,stroke:#9ca3af,stroke-width:1px
-    style Analytics fill:none,stroke:#9ca3af,stroke-width:1px
-    style ObjectStorage fill:none,stroke:#9ca3af,stroke-width:1px
-    
-    %% Node styling - very light gray backgrounds
-    style Audio fill:#fcfcfd,stroke:#1f2937,stroke-width:2px
-    style Transcripts fill:#fcfcfd,stroke:#1f2937,stroke-width:2px
-    style Annotations fill:#fcfcfd,stroke:#1f2937,stroke-width:2px
-    style AgentActions fill:#fcfcfd,stroke:#1f2937,stroke-width:2px
-    style Config fill:#fcfcfd,stroke:#1f2937,stroke-width:2px
-    style Postgres fill:#fcfcfd,stroke:#059669,stroke-width:2.5px
-    style Redis fill:#fcfcfd,stroke:#1f2937,stroke-width:2px
-    style ES fill:#fcfcfd,stroke:#1f2937,stroke-width:2px
-    style ClickHouse fill:#fcfcfd,stroke:#1f2937,stroke-width:2px
-    style S3Audio fill:#fcfcfd,stroke:#059669,stroke-width:2.5px
-    style S3Models fill:#fcfcfd,stroke:#1f2937,stroke-width:2px
-    style TenantDB fill:#fcfcfd,stroke:#dc2626,stroke-width:2px
-    style TenantBucket fill:#fcfcfd,stroke:#dc2626,stroke-width:2px
-    style TenantIndex fill:#fcfcfd,stroke:#dc2626,stroke-width:2px
-```
 
 ---
 
@@ -296,87 +210,6 @@ flowchart TB
 
 ---
 
-## Regional Data Residency
-
-```mermaid
-flowchart TB
-    subgraph Outer[" "]
-        subgraph Customers["Customer Regions"]
-            USCustomer["US Customer"]
-            EUCustomer["EU Customer"]
-            APACCustomer["APAC Customer<br/>Verify"]
-        end
-
-        subgraph Routing["DNS-Based Routing"]
-            USSubdomain["customer.us-west-2.cresta.ai"]
-            EUSubdomain["customer.eu-west-1.cresta.ai"]
-            APACSubdomain["customer.ap-southeast-1.cresta.ai<br/>Verify"]
-        end
-
-        subgraph USRegion["US-West-2 Region"]
-            USCluster["EKS Cluster"]
-            USRDS[(PostgreSQL)]
-            USS3[(S3)]
-        end
-
-        subgraph EURegion["EU-West-1 Region"]
-            EUCluster["EKS Cluster"]
-            EURDS[(PostgreSQL)]
-            EUS3[(S3)]
-        end
-
-        subgraph APACRegion["AP-Southeast-1 Region"]
-            APACCluster["EKS Cluster<br/>Verify"]
-            APACRDS[(PostgreSQL<br/>Verify)]
-            APACS3[(S3<br/>Verify)]
-        end
-
-        USCustomer ==>|"Route"| USSubdomain
-        EUCustomer ==>|"Route"| EUSubdomain
-        APACCustomer ==>|"Route"| APACSubdomain
-
-        USSubdomain ==>|"DNS"| USCluster
-        EUSubdomain ==>|"DNS"| EUCluster
-        APACSubdomain ==>|"DNS"| APACCluster
-
-        USCluster ==>|"Store"| USRDS
-        USCluster ==>|"Store"| USS3
-        EUCluster ==>|"Store"| EURDS
-        EUCluster ==>|"Store"| EUS3
-        APACCluster ==>|"Store"| APACRDS
-        APACCluster ==>|"Store"| APACS3
-    end
-    
-    %% Outer container with white background
-    style Outer fill:#ffffff,stroke:#d1d5db,stroke-width:2px
-    
-    %% Transparent group backgrounds with light gray borders
-    style Customers fill:none,stroke:#9ca3af,stroke-width:1.5px
-    style Routing fill:none,stroke:#9ca3af,stroke-width:1.5px
-    style USRegion fill:none,stroke:#9ca3af,stroke-width:1.5px
-    style EURegion fill:none,stroke:#9ca3af,stroke-width:1.5px
-    style APACRegion fill:none,stroke:#9ca3af,stroke-width:1.5px
-    
-    %% Node styling - very light gray backgrounds
-    style USCustomer fill:#fcfcfd,stroke:#1f2937,stroke-width:2px
-    style EUCustomer fill:#fcfcfd,stroke:#059669,stroke-width:2.5px
-    style APACCustomer fill:#fcfcfd,stroke:#dc2626,stroke-width:2px
-    style USSubdomain fill:#fcfcfd,stroke:#1f2937,stroke-width:2px
-    style EUSubdomain fill:#fcfcfd,stroke:#059669,stroke-width:2.5px
-    style APACSubdomain fill:#fcfcfd,stroke:#dc2626,stroke-width:2px
-    style USCluster fill:#fcfcfd,stroke:#1f2937,stroke-width:2px
-    style USRDS fill:#fcfcfd,stroke:#059669,stroke-width:2.5px
-    style USS3 fill:#fcfcfd,stroke:#059669,stroke-width:2.5px
-    style EUCluster fill:#fcfcfd,stroke:#059669,stroke-width:2.5px
-    style EURDS fill:#fcfcfd,stroke:#059669,stroke-width:2.5px
-    style EUS3 fill:#fcfcfd,stroke:#059669,stroke-width:2.5px
-    style APACCluster fill:#fcfcfd,stroke:#dc2626,stroke-width:2px
-    style APACRDS fill:#fcfcfd,stroke:#dc2626,stroke-width:2px
-    style APACS3 fill:#fcfcfd,stroke:#dc2626,stroke-width:2px
-```
-
----
-
 ## Compliance Framework
 
 ```mermaid
@@ -446,63 +279,103 @@ flowchart LR
 
 ---
 
-## Data Retention & Lifecycle
+## Security Controls
 
-```mermaid
-flowchart TB
-    subgraph Outer[" "]
-        subgraph DataTypes["Data Types"]
-            AudioData["Audio Files"]
-            TranscriptData["Transcripts"]
-            AnnotationData["Annotations"]
-            AnalyticsData["Analytics"]
-        end
+### Perimeter Security
 
-        subgraph Retention["Retention Periods"]
-            AudioRetention["Audio: Customer-defined<br/>Default: 90 days"]
-            TranscriptRetention["Transcripts: Customer-defined<br/>Default: 1 year"]
-            AnnotationRetention["Annotations: Customer-defined"]
-            AnalyticsRetention["Analytics: Aggregated<br/>Indefinite"]
-        end
+| Control | Implementation | Purpose |
+|--------|----------------|---------|
+| **WAF** | Wallarm (NGINX-based) | Protect against web application attacks |
+| **DDoS Protection** | AWS Shield / CloudFront | Mitigate distributed denial of service attacks |
+| **TLS** | TLS 1.2+ termination | Encrypt all traffic in transit |
 
-        subgraph Lifecycle["Lifecycle Actions"]
-            Active["Active Storage"]
-            Archive["Archive (S3 Glacier)"]
-            Delete["Secure Deletion"]
-        end
+### Network Security
 
-        AudioData ==>|"Retain"| AudioRetention
-        TranscriptData ==>|"Retain"| TranscriptRetention
-        AnnotationData ==>|"Retain"| AnnotationRetention
-        AnalyticsData ==>|"Retain"| AnalyticsRetention
+| Control | Implementation | Purpose |
+|--------|----------------|---------|
+| **VPC** | AWS VPC | Network isolation |
+| **Private Subnets** | Private subnets for compute | Limit public exposure |
+| **Security Groups** | Stateful firewall rules | Control traffic between resources |
+| **NACLs** | Network ACLs | Additional network layer security |
 
-        AudioRetention ==>|"After Period"| Active
-        TranscriptRetention ==>|"After Period"| Active
-        Active ==>|"Archive"| Archive
-        Archive ==>|"After Archive Period"| Delete
-    end
-    
-    %% Outer container with white background
-    style Outer fill:#ffffff,stroke:#d1d5db,stroke-width:2px
-    
-    %% Transparent group backgrounds with light gray borders
-    style DataTypes fill:none,stroke:#9ca3af,stroke-width:1.5px
-    style Retention fill:none,stroke:#9ca3af,stroke-width:1.5px
-    style Lifecycle fill:none,stroke:#9ca3af,stroke-width:1.5px
-    
-    %% Node styling - very light gray backgrounds
-    style AudioData fill:#fcfcfd,stroke:#1f2937,stroke-width:2px
-    style TranscriptData fill:#fcfcfd,stroke:#1f2937,stroke-width:2px
-    style AnnotationData fill:#fcfcfd,stroke:#1f2937,stroke-width:2px
-    style AnalyticsData fill:#fcfcfd,stroke:#1f2937,stroke-width:2px
-    style AudioRetention fill:#fcfcfd,stroke:#d97706,stroke-width:2.5px
-    style TranscriptRetention fill:#fcfcfd,stroke:#d97706,stroke-width:2.5px
-    style AnnotationRetention fill:#fcfcfd,stroke:#d97706,stroke-width:2.5px
-    style AnalyticsRetention fill:#fcfcfd,stroke:#d97706,stroke-width:2.5px
-    style Active fill:#fcfcfd,stroke:#1f2937,stroke-width:2px
-    style Archive fill:#fcfcfd,stroke:#d97706,stroke-width:2.5px
-    style Delete fill:#fcfcfd,stroke:#dc2626,stroke-width:2px
-```
+### Identity & Access Management
+
+| Control | Implementation | Purpose |
+|--------|----------------|---------|
+| **IAM Roles** | AWS IAM roles for services | Least privilege access for AWS resources |
+| **RBAC** | Cresta role-based access control | User permissions within Cresta platform |
+| **SSO** | Single Sign-On integration | 🟡 Providers require verification |
+| **MFA** | Multi-factor authentication | 🟡 Implementation requires verification |
+
+### Data Protection
+
+| Control | Implementation | Purpose |
+|--------|----------------|---------|
+| **KMS** | AWS Key Management Service | Centralized encryption key management |
+| **Encryption at Rest** | AES-256 encryption | Protect stored data |
+| **Encryption in Transit** | TLS 1.2+ | Protect data during transmission |
+| **PII Redaction** | Automated detection and redaction | Protect sensitive information |
+
+---
+
+## PII Redaction Pipeline
+
+**Purpose**: Automatically detect and redact personally identifiable information (PII) from audio and transcripts to ensure compliance with privacy regulations.
+
+### Detection Methods
+
+| Method | PII Types Detected | Notes |
+|--------|-------------------|-------|
+| **Named Entity Recognition (NER)** | Full names, addresses | ML-based detection |
+| **Regex Patterns** | SSN, credit card numbers, phone numbers | Pattern matching |
+| **ML-based Detection** | Date of birth, other structured PII | Advanced ML models |
+
+### Redaction Actions
+
+| Action | Implementation | Output |
+|--------|----------------|--------|
+| **Text Masking** | Replace PII with tags (e.g., [FULLNAME], [SSN]) | Redacted transcript |
+| **Audio Beeping** | Mute audio segments containing PII | Redacted audio file |
+
+### Verification Process
+
+1. **Re-scan**: Temporal workflow re-scans redacted content for missed PII
+2. **Decision**: If PII found → retry redaction; if clean → mark complete
+3. **Manual Review**: Failed redactions after max retries go to manual review queue
+4. **Alerting**: Security alerts triggered on persistent failures
+
+---
+
+## Compliance Framework
+
+### Certifications (Confirmed via Cresta Trust Center)
+
+| Certification | Scope | Status |
+|---------------|-------|--------|
+| **SOC 2 Type II** | Security, availability, processing integrity | ✅ Confirmed |
+| **ISO 27001** | Information security management | ✅ Confirmed |
+| **ISO 27701** | Privacy information management | ✅ Confirmed |
+| **ISO 42001** | AI management systems | ✅ Confirmed |
+| **PCI-DSS** | Payment card industry data security | ✅ Confirmed |
+| **HIPAA** | Healthcare data protection (BAA available) | ✅ Confirmed |
+
+### Compliance Areas
+
+| Area | Regulations | Controls |
+|------|-------------|----------|
+| **Privacy** | GDPR, CCPA/CPRA | Data residency, PII redaction, data retention |
+| **Financial** | PCI-DSS | PII redaction, encryption, access controls |
+| **Healthcare** | HIPAA | BAA available, encryption, audit trails |
+| **AI Governance** | ISO 42001 | Fairness, transparency, responsible AI |
+
+### Key Controls
+
+- **Encryption**: At rest (AES-256) and in transit (TLS 1.2+)
+- **Access Control**: RBAC + IAM with least privilege
+- **Audit Trail**: All actions logged for compliance
+- **Data Retention**: Customer-configurable policies
+- **Incident Response**: Documented plan and procedures
+- **Penetration Testing**: Annual security assessments
 
 ---
 
@@ -526,37 +399,20 @@ flowchart TB
 | Audit failure | Medium | Mitigated | SOC 2 certification |
 | Data retention violation | Medium | 🟡 Verify | Customer-configurable retention |
 
-### ⚙️ Operational Risks
-
-| Risk | Severity | Status | Mitigation |
-|------|----------|--------|------------|
-| Data loss | High | Mitigated | S3 durability, backups |
-| Slow search | Medium | Mitigated | Elasticsearch indexing |
-| Storage costs | Low | Monitor | Lifecycle policies |
-
 ---
 
 ## Items Requiring Follow-up 🟡
 
 1. **SSO Providers** - Which SSO providers are supported (Okta, Azure AD, etc.)?
 2. **SIEM Integration** - What SIEM platforms can ingest Cresta logs?
-3. **Data Retention Defaults** - What are the default retention periods?
-4. **APAC Region** - Is AP-Southeast-1 available for data residency?
-5. **Archive Strategy** - Is S3 Glacier used for long-term audio storage?
-6. **Deletion Process** - What is the process for customer data deletion requests?
-7. **Backup RPO/RTO** - What are the backup and recovery objectives?
+3. **MFA Implementation** - How is multi-factor authentication implemented?
+4. **PII Redaction Accuracy** - What is the accuracy rate for PII detection and redaction?
 
 ---
 
 ## Summary
 
-This document describes the data storage architecture, security controls, compliance framework, and data lifecycle management for the Cresta platform.
-
-**Data Storage Architecture**:
-- **Operational Stores**: PostgreSQL (conversations, transcripts, users, policies), Redis (event streams, session cache, policy cache)
-- **Analytics Stores**: Elasticsearch (conversation search, full-text index), ClickHouse (analytics, metrics, aggregations)
-- **Object Storage**: AWS S3 (encrypted audio files, model artifacts)
-- **Customer Isolation**: Separate databases, S3 paths, and ES indices per customer
+This document describes the security controls, compliance framework, and PII redaction pipeline for the Cresta platform.
 
 **Security Controls**:
 - **Perimeter**: Wallarm WAF, DDoS protection, TLS 1.2+ termination
@@ -571,10 +427,6 @@ This document describes the data storage architecture, security controls, compli
 
 **Compliance Framework** (Confirmed via Cresta Trust Center):
 - **Certifications**: SOC 2 Type II, ISO 27001 (Information Security), ISO 27701 (Privacy), ISO 42001 (AI Management), PCI-DSS, HIPAA (BAA available)
-- **Regional Data Residency**: US (us-west-2), EU (eu-west-1) confirmed; APAC (ap-southeast-1) requires verification
+- **Compliance Areas**: Privacy (GDPR, CCPA), Financial (PCI-DSS), Healthcare (HIPAA), AI Governance (ISO 42001)
 
-**Data Retention & Lifecycle**:
-- **Retention**: Customer-configurable (defaults require verification)
-- **Lifecycle**: Active storage → Archive (S3 Glacier assumed, requires verification) → Secure deletion
-
-**Verification Status**: Compliance certifications confirmed via Cresta Trust Center. Data isolation approach consistent with Cresta blog. SSO providers, SIEM integration, APAC region availability, data retention defaults, archive strategy, and backup RPO/RTO require Cresta confirmation.
+**Verification Status**: Compliance certifications confirmed via Cresta Trust Center. Security controls align with AWS best practices. SSO providers, SIEM integration, and MFA implementation require Cresta confirmation.

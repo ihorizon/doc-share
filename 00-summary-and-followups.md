@@ -18,6 +18,7 @@
 | 12 | [POC Test Scenarios](12-poc-test-scenarios.md) | Technical test scenarios, success criteria, validation |
 | 13 | [Proof of Concept Plan](13-proof-of-concept-plan.md) | Business-focused POC plan aligned with use cases |
 | 14 | [Cresta SDK Developer Guide Analysis](14-cresta-sdk-developer-guide-analysis.md) | Analysis of SDK guide validating architecture and adding SDK details |
+| 15 | [Cresta Questions & Gaps](15-cresta-questions-and-gaps.md) | Summary of what we know vs. questions for Cresta |
 | — | [References](references.md) | Central index of all material references and what was referenced |
 
 ---

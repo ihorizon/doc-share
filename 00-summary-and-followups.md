@@ -19,6 +19,7 @@
 | 13 | [Proof of Concept Plan](13-proof-of-concept-plan.md) | Business-focused POC plan aligned with use cases |
 | 14 | [Cresta SDK Developer Guide Analysis](14-cresta-sdk-developer-guide-analysis.md) | Analysis of SDK guide validating architecture and adding SDK details |
 | 15 | [Cresta Questions & Gaps](15-cresta-questions-and-gaps.md) | Summary of what we know vs. questions for Cresta |
+| 16 | [Cresta Technical Due Diligence](16-cresta-technical-due-diligence.md) | Due diligence by section with APRA/banking context |
 | — | [References](references.md) | Central index of all material references and what was referenced |
 
 ---
